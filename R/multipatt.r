@@ -24,9 +24,9 @@ cl.comb <- function(clnames) {
 }
 
 # Correlation measures for combinations
-rcomb <- function(x, cluster, comb, k, mode="group", duleg=FALSE, restcomb=NULL) {
+rcomb <- function(x, comb, k, mode="group", duleg=FALSE, restcomb=NULL) {
       nsps = ncol(x)
-      N = length(cluster)	
+      N = dim(comb)[1]	
       ni = diag(t(comb) %*% comb)[1:k]
       tx <- t(x)
       aisp = (tx %*% comb)[,1:k]
@@ -81,7 +81,7 @@ rcomb <- function(x, cluster, comb, k, mode="group", duleg=FALSE, restcomb=NULL)
 }
 
 # IndVal for combinations
-indvalcomb <- function(x, cluster, comb, k, mode = "group", duleg = FALSE, restcomb=NULL) {
+indvalcomb <- function(x, comb, k, mode = "group", duleg = FALSE, restcomb=NULL, indvalcomp=FALSE) {
   tx <- t(x)
   aisp = tx %*% comb
   dx <- dim(tx)
@@ -107,7 +107,13 @@ indvalcomb <- function(x, cluster, comb, k, mode = "group", duleg = FALSE, restc
   iv = sqrt(A * nispni)
   colnames(iv) <- colnames(comb)
   if(!duleg && !is.null(restcomb)) iv = iv[,restcomb]
-  return(iv)
+  
+  if(!indvalcomp) return(iv)
+  else {
+	  colnames(A) <- colnames(comb)
+    colnames(nispni) <- colnames(comb)
+    return(list(A=A,B=nispni, iv=iv))
+  }
 }
 
 
@@ -146,15 +152,26 @@ sampletorus<-function(grid.size) {
   if (duleg) combin <- combin[,1:k]
   
   #Builds the plot membership matrix corresponding to combinations
-  comb <- combin[cluster,]
+  clind = apply(sapply(clnames,"==",cluster),1,which)
+  comb <- combin[clind,]
 
   # Computes association strength for each group
-  str <- switch(func,
-    r =		rcomb(x, cluster, comb, k, mode = "site", duleg = duleg, restcomb = restcomb),
-    r.g = 	rcomb(x, cluster, comb, k, mode = "group", duleg = duleg, restcomb = restcomb),
-    IndVal = 	indvalcomb(x, cluster, comb, k, mode = "site", duleg, restcomb = restcomb),
-    IndVal.g = 	indvalcomb(x, cluster, comb, k, mode = "group", duleg, restcomb = restcomb),
-    )
+  A = NULL
+  B = NULL
+  if(func=="r") str = rcomb(x, comb, k, mode = "site", duleg = duleg, restcomb = restcomb)
+  else if(func=="r.g") str = rcomb(x, comb, k, mode = "group", duleg = duleg, restcomb = restcomb)
+  else if(func=="IndVal") {
+  	  IndVal = 	indvalcomb(x, comb, k, mode = "site", duleg, restcomb = restcomb, indvalcomp=TRUE)
+  	  str = IndVal$iv
+  	  A = IndVal$A
+  	  B = IndVal$B
+  	}
+  else if(func=="IndVal.g") {
+  	  IndVal = 	indvalcomb(x, comb, k, mode = "group", duleg, restcomb = restcomb, indvalcomp=TRUE)
+  	  str = IndVal$iv
+  	  A = IndVal$A
+  	  B = IndVal$B
+  	}
 
   # Maximum association strength
   maxstr = apply(str,1,max) 
@@ -170,13 +187,13 @@ sampletorus<-function(grid.size) {
   pv <- 1
   for (p in 1:nperm) {
       if (!torus) pInd <- sample(1:length(cluster)) else pInd <- sampletorus(grid.size)
-      tmpcls = cluster[pInd]
-		 combp = combin[tmpcls,]
+      tmpclind = clind[pInd]
+		 combp = combin[tmpclind,]
       tmpstr <- switch(func,
-	r   = rcomb(x, cluster = tmpcls, combp, k, mode = "site", duleg = duleg, restcomb = restcomb),
-	r.g = rcomb(x, cluster = tmpcls, combp, k, mode = "group", duleg = duleg, restcomb = restcomb),
-	IndVal = indvalcomb(x, cluster = tmpcls, combp, k, mode = "site", duleg, restcomb = restcomb),
-	IndVal.g= indvalcomb(x, cluster = tmpcls, combp, k, mode = "group", duleg, restcomb = restcomb)
+	r   = rcomb(x, combp, k, mode = "site", duleg = duleg, restcomb = restcomb),
+	r.g = rcomb(x, combp, k, mode = "group", duleg = duleg, restcomb = restcomb),
+	IndVal = indvalcomb(x, combp, k, mode = "site", duleg, restcomb = restcomb),
+	IndVal.g= indvalcomb(x, combp, k, mode = "group", duleg, restcomb = restcomb)
       )
       tmpmaxstr <- vector(length=nrow(tmpstr))
       for(i in 1:nrow(tmpstr)) tmpmaxstr[i] <- max(tmpstr[i,])	# apply is more slowly in this case
@@ -189,7 +206,7 @@ sampletorus<-function(grid.size) {
 
   if(!duleg && !is.null(restcomb))  comb<-comb[,restcomb]
   
-  a = list(call=match.call(), func = func, cluster = cluster, comb = comb, str = str, sign = m)
+  a = list(call=match.call(), func = func, cluster = cluster, comb = comb, str = str, A=A, B=B, sign = m)
   class(a) = "multipatt"
   return(a)
 }

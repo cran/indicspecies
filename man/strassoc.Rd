@@ -4,7 +4,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Strength of species site-group associations}
 \description{
-  This function computes the strength of the association between a species vector and a vector of memberships to the site-group. Several statistics are possible, following De \enc{Cáceres}{Caceres} and Legendre (accepted). The choice of the most appropriate statistic depends on the application. If required, bootstrap confidence interval bounds are also computed.
+  This function computes the strength of the association between a species vector and a vector of memberships to the site-group. Several statistics are possible, following De \enc{Cáceres}{Caceres} and Legendre (2009). The choice of the most appropriate statistic depends on the application. If required, bootstrap confidence interval bounds are also computed.
 }
 \usage{
 strassoc(X, cluster, func = "r", group = NULL, nboot = 0, alpha = 0.05, c = 1)
@@ -26,7 +26,7 @@ strassoc(X, cluster, func = "r", group = NULL, nboot = 0, alpha = 0.05, c = 1)
   Returns a matrix of association values, where species are in rows and groups are in columns. If 'nboot' is non zero, then a list is returned, where 'stat' contains the matrix of association values, and the lower and upper confidence limits are given in supplementary matrices named 'lowerCI' and 'upperCI' respectively.
 }
 \note{
-This function gives the same association values as function \code{duleg} in package "labdsv" when used setting \code{func="IndVal.g"}, excepting the fact that the square root IndVal values is returned instead of the original IndVal.
+This function gives the same association values as function \code{indval} in package "labdsv" when used setting \code{func="IndVal.g"}, excepting the fact that the square root IndVal values is returned instead of the original IndVal.
 }
 \references{
 De \enc{Cáceres}{Caceres}, M. and Legendre, P. 2009. Associations between species and groups of sites: indices and statistical inference. Ecology 90(12): 3566-3574.
