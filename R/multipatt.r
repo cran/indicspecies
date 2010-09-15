@@ -1,6 +1,5 @@
 #Finds the combination of clusters which is most significantly associated to each of the species patterns
-multipatt <- function (x, cluster, func = "IndVal.g", duleg = FALSE, restcomb=NULL, nperm = 999,                                                                  
-  torus = FALSE, grid.size, print.perm = FALSE)                                                                                              
+multipatt <- function (x, cluster, func = "IndVal.g", duleg = FALSE, restcomb=NULL, control = permControl(), print.perm = FALSE)                                                                                              
 {
 	                                                                                                                              
 
@@ -75,7 +74,11 @@ rcomb <- function(x, comb, k, mode="group", duleg=FALSE, restcomb=NULL) {
   den = sqrt(((N*lspK)-aspK^2)%o%(N*nC-(nC^2)))
   str=num/den
   if(!duleg) str <- str[,-ncol(str)] # remove all sites as combination for correlation indices
-  if(!duleg && !is.null(restcomb)) str <- str[,restcomb]
+  if(!duleg && !is.null(restcomb)) {
+    if(sum(restcomb %in% (1:ncol(str)))!=length(restcomb)) 
+      stop(paste("One or more indices in 'restcomb' are out of range [1, ",ncol(str),"]",sep=""))      
+    str <- str[,restcomb]
+  }
 #  colnames(str) <- colnames(comb)[1:ncol(str)]
   return(str)
 }
@@ -106,46 +109,37 @@ indvalcomb <- function(x, comb, k, mode = "group", duleg = FALSE, restcomb=NULL,
   }
   iv = sqrt(A * nispni)
   colnames(iv) <- colnames(comb)
-  if(!duleg && !is.null(restcomb)) iv = iv[,restcomb]
-  
+  colnames(A) <- colnames(comb)
+  colnames(nispni) <- colnames(comb)
+  rownames(A) <- rownames(iv)
+  rownames(nispni) <- rownames(iv)
+  if(!duleg && !is.null(restcomb)) {
+    if(sum(restcomb %in% (1:ncol(iv)))!=length(restcomb)) 
+      stop(paste("One or more indices in 'restcomb' are out of range [1, ",ncol(iv),"]",sep=""))
+    iv = iv[,restcomb]
+    A = A[,restcomb]
+    nispni = nispni[,restcomb]
+  }
   if(!indvalcomp) return(iv)
-  else {
-	  colnames(A) <- colnames(comb)
-    colnames(nispni) <- colnames(comb)
-    return(list(A=A,B=nispni, iv=iv))
-  }
+  else return(list(A=A,B=nispni, iv=iv))
 }
 
-
-sampletorus<-function(grid.size) {
-  d1= grid.size[1]
-  d2= grid.size[2]
-  m1 = as.integer(runif(1,0,d1))
-  m2 = as.integer(runif(1,0,d2))
-  nsites= d1*d2
-  pInd = 1:nsites
-  for(j in 1:nsites) {
-	  yc = (j-1)%%d2+1
-	  xc = (j-yc)/d2
-	  r = ((xc+m1)%%d1)*d2 + (yc-1+m2)%%d2 + 1
-	  pInd[j]=r
-  }
-  return(pInd)
-}
 	
   vegnames <- names(x)
   x <- as.matrix(x)                                                                                                                                
   nsps = ncol(x)
   clnames = levels(as.factor(cluster))
   k = length(clnames)
+  nperm = control$nperm
 
   # Check parameters
    func= match.arg(func, c("r","r.g","IndVal.g","IndVal"))
-	if(torus && is.null(grid.size)) stop("Please, supply 'grid.size' dimensions if you want to use torus translation.")
-	if(k<2) stop("At least two clusters are required.")
+  if(k<2) stop("At least two clusters are required.")
   if(sum(is.na(cluster))>0) stop("Cannot deal with NA values. Remove and run again.")
   if(sum(is.na(x))>0) stop("Cannot deal with NA values. Remove and run again.")
-  if(!is.null(restcomb)) restcomb = as.integer(restcomb)
+  if(!is.null(restcomb)) { 
+    restcomb = as.integer(restcomb)
+  }
 
   # creates combinations from clusters
   combin <- cl.comb(clnames)	# possible combinations (can also be used for permutations)
@@ -186,9 +180,9 @@ sampletorus<-function(grid.size) {
   #Perform permutations and compute p-values
   pv <- 1
   for (p in 1:nperm) {
-      if (!torus) pInd <- sample(1:length(cluster)) else pInd <- sampletorus(grid.size)
+  	  pInd = shuffle(length(cluster), control=control)
       tmpclind = clind[pInd]
-		 combp = combin[tmpclind,]
+	  combp = combin[tmpclind,]
       tmpstr <- switch(func,
 	r   = rcomb(x, combp, k, mode = "site", duleg = duleg, restcomb = restcomb),
 	r.g = rcomb(x, combp, k, mode = "group", duleg = duleg, restcomb = restcomb),

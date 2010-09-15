@@ -1,5 +1,5 @@
 `signassoc` <-
-function(X, U=NULL, cluster=NULL, mode = 1, nperm=999, alternative="greater", torus=FALSE, grid.size, print.perm=FALSE) {
+function(X, U=NULL, cluster=NULL, mode = 1, alternative="greater", control = permControl(), print.perm=FALSE) {
 	
 vector.to.partition <- function(v, clnames) {
     m <- t(sapply(v,function(x) as.numeric(x==clnames)))
@@ -7,28 +7,12 @@ vector.to.partition <- function(v, clnames) {
     return(m)                                                                                                                              
 }                                                                                                                                          
 	
-sampletorus<-function(grid.size) {
-  d1= grid.size[1]
-  d2= grid.size[2]
-  m1 = as.integer(runif(1,0,d1))
-  m2 = as.integer(runif(1,0,d2))
-  nsites= d1*d2
-  pInd = 1:nsites
-  for(j in 1:nsites) {
-	  yc = (j-1)%%d2+1
-	  xc = (j-yc)/d2
-	  r = ((xc+m1)%%d1)*d2 + (yc-1+m2)%%d2 + 1
-	  pInd[j]=r
-  }
-  return(pInd)
-}
-
   nsps = ncol(X)
   nsites = nrow(X)
+  nperm = control$nperm
   
    mode= match.arg(as.character(mode), c("0","1"))
    alternative= match.arg(as.character(alternative), c("greater","less","two.sided"))
-	if(torus && is.null(grid.size)) stop("Please, suply 'grid.size' dimensions if you want to use torus translation.")
   if(sum(is.na(X))>0) stop("Cannot deal with NA values. Remove and run again.")
   
   if(is.null(U)) U = vector.to.partition(cluster, levels(factor(cluster))) 
@@ -55,11 +39,7 @@ sampletorus<-function(grid.size) {
   a <- system.time({
   for(p in 1:nperm) {
       if(p%%100==0 & print.perm) cat("perm", p,"\n")
-		if(!torus) {
-		   pInd=sample(1:nsites)
-		} else {
-		   pInd=sampletorus(grid.size)
-		}
+		pInd=shuffle(nsites,control)	##Calls function from package 'permute'	
 		pX = as.matrix(X[pInd,])
   		if(mode==0) {
 	  		dmp = t(pX)%*%U
