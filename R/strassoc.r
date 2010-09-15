@@ -59,6 +59,22 @@ IndVal2<-function(sav,gmv,group=NULL) {
    return (indvals)
 }
 
+A<-function(sav,gmv,group=NULL) {
+   gmv= as.factor(gmv)
+   sums = vector("numeric",length(levels(gmv))) 
+   for(i in 1:length(levels(gmv))) {
+	   sums[i]=sum(sav[gmv==levels(gmv)[i]])
+   }
+   if(is.null(group)) {   #COMPUTE A FOR ALL GROUPS 
+   	   A = rep(0,length(sums))
+	   for(i in 1:length(levels(gmv))) {
+		  A[i]= ifelse(sum(sums)>0,sums[i]/sum(sums),0)
+	   }
+   } else {  #COMPUTE A FOR ONE GROUP
+	   A= ifelse(sum(sums)>0,sum(sav[gmv==group])/sum(sums),0)
+   }   
+   return (A)
+}
 r.g<-function(sav,gmv, group=NULL) {   
    gmv= as.factor(gmv)
    npm = vector("numeric",length(levels(gmv)))
@@ -284,7 +300,7 @@ cos.s<-function(sav, gmv, group=NULL) {
 	else if(func=="IndVal.g") a = IndVal1(sav,gmv,group)[,3]
 	else if(func=="IndVal") a = IndVal2(sav,gmv,group)[,3]
 	else if(func=="A.g") a = IndVal1(sav,gmv,group)[,1]
-	else if(func=="A") a = IndVal2(sav,gmv,group)[,1]
+	else if(func=="A") a = A(sav,gmv,group)
 	else if(func=="B") a = IndVal2(sav,gmv,group)[,2]
 	return (a)
   }	
@@ -314,7 +330,7 @@ cos.s<-function(sav, gmv, group=NULL) {
 	} 
 	
 	# Compute diagnostic values
-   X = as.matrix(X)
+    X = as.matrix(X)
 	for(i in 1:nsps) {	
 		dm[i,] = ass.func(X[,i], cluster,func,group)
 	}
@@ -341,10 +357,10 @@ cos.s<-function(sav, gmv, group=NULL) {
 		}
 	   dmlower=data.frame(dmlower)
 	   dmupper=data.frame(dmupper)
-  	   row.names(dmlower)=names(X)
+  	   row.names(dmlower)=colnames(X)
 	   if(is.null(group)) names(dmlower)=levels(cluster)
 	   else names(dmlower)=group
-  	   row.names(dmupper)=names(X)
+  	   row.names(dmupper)=colnames(X)
 	   if(is.null(group)) names(dmupper)=levels(cluster)
 	   else names(dmupper)=group
 	   

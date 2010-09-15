@@ -13,7 +13,7 @@ This package provides a set of functions to assess the strength of species site 
 \tabular{ll}{
 Package: \tab indicspecies\cr
 Type: \tab Package\cr
-Version: \tab 1.5.2\cr
+Version: \tab 1.6.0\cr
 Date: \tab 2008-10-23\cr
 License: \tab GPL version 2 or newer\cr
 LazyLoad: \tab yes\cr
