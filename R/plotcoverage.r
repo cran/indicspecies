@@ -1,36 +1,26 @@
-plotcoverage<-function(speciescomb, by=0.05,...) {
+plotcoverage<-function(x, by=0.05, type="stat", max.order=NULL, add=FALSE, ...) {
+   match.arg(type,c("lowerCI","upperCI","stat"))
    Atseq <- seq(0,1,by=by)
-   A <- speciescomb$A
-   ci<-FALSE
+   A <- x$A
    if(is.data.frame(A)) {
-   	  LA<-A$lowerCI
-   	  UA<-A$upperCI
-   	  A<-A$stat
+      if(type=="lowerCI") A<-A$lowerCI
+   	  else if(type=="upperCI") A<-A$upperCI
+   	  else A<-A$stat
       covLA<-covUA<-numeric(length(Atseq))
-      ci<-TRUE
    } 
+   num.order <- rowSums(x$C)
+   sel2 <- rep(TRUE,length(num.order))
+   if(!is.null(max.order)) sel2[num.order>max.order] <- FALSE
    covA<-numeric(length(Atseq))
    for(i in 1:length(Atseq)) {
    	  sel = A>Atseq[i]
    	  sel[is.na(sel)]<-TRUE
-   	  if(sum(sel)>0) covA[i] = coverage(speciescomb, selection = sel)
+   	  if(sum(sel & sel2)>0) covA[i] = coverage(x, selection = sel & sel2)
    	  else covA[i] = 0
    }
-   plot(Atseq,covA*100, type="l", axes=FALSE, xlab=expression(A[t]), ylab="Coverage (%)",...)	
-   if(ci) {
-	   for(i in 1:length(Atseq)) {
-    	  sel = LA>Atseq[i]
-   	      sel[is.na(sel)]<-TRUE
-   		  if(sum(sel)>0) covLA[i] = coverage(speciescomb, selection = sel)
-   	  	  else covLA[i] = 0
-    	  sel = UA>Atseq[i]
-   	      sel[is.na(sel)]<-TRUE
-   		  if(sum(sel)>0) covUA[i] = coverage(speciescomb, selection = sel)
-   	  	  else covUA[i] = 0
-   	    }
-   	    lines(Atseq, covLA*100, lty=2, col="gray")
-   	    lines(Atseq, covUA*100, lty=2, col="gray")
-   }
-   axis(1, pos=0)
-   axis(2, pos=0)
+   if(!add) {
+     plot(Atseq,covA*100, type="s", axes=FALSE, xlab=expression(A[t]), ylab="Coverage (%)", ...)	
+     axis(1, pos=0)
+     axis(2, pos=0)     
+   } else lines(Atseq,covA*100, type="s", ...)
 }

@@ -1,5 +1,6 @@
 	#Determines the coverage of a set of indicators
-	coverage <- function (speciescomb, selection=NULL) {
+	coverage <- function (x, selection=NULL) {
+		speciescomb = x
 		if(is.null(selection)) selection = rep(TRUE, nrow(speciescomb$C))
 		if(length(dim(speciescomb$C))==2) c = speciescomb$C[selection,]
 		else c = speciescomb$c[selection]

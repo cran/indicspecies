@@ -1,4 +1,4 @@
-print.speciescomb <- function (x, At = 0, Bt = 0, sqrtIVt = 0, selection = NULL, confint=FALSE,...) {
+print.indicators <- function (x, At = 0, Bt = 0, sqrtIVt = 0, selection = NULL, confint=FALSE,...) {
 	if(is.null(selection)) selection = rep(TRUE, nrow(x$C))
 	if(length(dim(x$A))==2) {
 		A = x$A[selection,]
@@ -35,7 +35,7 @@ print.speciescomb <- function (x, At = 0, Bt = 0, sqrtIVt = 0, selection = NULL,
     CM = subset(C,sel)
     m = data.frame(matrix(0,nrow = sum(sel), ncol=nc))
     if(nc==3) names(m) = c("A","B","sqrtIV")
-    else if(nc==9) names(m) = c("A","LA","UA","B","LA","UA","sqrtIV", "LA","UA")
+    else if(nc==9) names(m) = c("A","LA","UA","B","LB","UB","sqrtIV", "LsqrtIV","UsqrtIV")
     if(sum(sel)>0) {
     	if(nc==3) {
     		m[,1] = A

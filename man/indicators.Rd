@@ -1,8 +1,8 @@
 \encoding{UTF-8}
-\name{speciescomb}
-\alias{speciescomb}
-\alias{print.speciescomb}
-\alias{plot.speciescomb}
+\name{indicators}
+\alias{indicators}
+\alias{print.indicators}
+\alias{plot.indicators}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Indicator analysis for species combinations}
@@ -10,14 +10,14 @@
  Determines the indicator value of species combinations. 
 }
 \usage{
-speciescomb(X, cluster, group, func="IndVal", max.order=5, At=0, Bt=0, sqrtIVt=0, nboot=0, alpha=0.05, XC=TRUE, verbose = FALSE)
-\method{print}{speciescomb} (x, At=0, Bt=0, sqrtIVt=0, selection=NULL, confint=FALSE,...)
-\method{plot}{speciescomb} (x, type="sqrtIV", maxline=TRUE,...)
+indicators(X, cluster, group, func="IndVal", max.order=5, At=0, Bt=0, sqrtIVt=0, nboot=0, alpha=0.05, XC=TRUE, enableFixed = FALSE, verbose = FALSE)
+\method{print}{indicators} (x, At=0, Bt=0, sqrtIVt=0, selection=NULL, confint=FALSE,...)
+\method{plot}{indicators} (x, type="sqrtIV", maxline=TRUE,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{X}{A community data table with sites in rows and species in columns. This table can contain either presence-absence or abundance data.}
-  \item{x}{An object of class 'speciescomb'.}
+  \item{x}{An object of class 'indicators'.}
   \item{cluster}{A vector containing the classification of sites into site groups.}
   \item{group}{The label corresponding to the target site group. }
   \item{max.order}{Maximum number of species conforming species combinations.}
@@ -28,6 +28,7 @@ speciescomb(X, cluster, group, func="IndVal", max.order=5, At=0, Bt=0, sqrtIVt=0
   \item{nboot}{Number of bootstrap samples for confidence intervals.}
   \item{alpha}{Error in confidence intervals.}
   \item{XC}{If TRUE, outputs the abundance/occurrence matrix of species combinations.}
+  \item{enableFixed}{If TRUE, uses species that occur in all sites as fixed elements and creates combinations with the remaining ones.}
   \item{verbose}{If TRUE, prints the results of each step.}
   \item{selection}{A logical vector used to restrict, a priori, the species combinations to be printed.}
   \item{confint}{Flag to indicate that confidence interval bounds are desired when printing.}
@@ -36,10 +37,10 @@ speciescomb(X, cluster, group, func="IndVal", max.order=5, At=0, Bt=0, sqrtIVt=0
   \item{...}{Additional arguments for functions \code{print} or \code{plot}.}
 }
 \details{
-   Function \code{speciescomb} creates explores the indicator value of the simultaneous occurrence of sets of species (i.e. species combinations). The maximum number of species conforming the species combination can be controlled using \code{max.order}. For each combination of species it determines its positive predictive value (A), sensitivity (B) and the square root of indicator value (sqrtIV). If \code{nboot>0} then bootstrap confidence intervals are determined with the specified \code{alpha} level. The combinations to be kept can be restricted to those whose positive predictive value, sensitivity and/or indicator value are equal or greater than input thresholds. Function \code{print} allows printing the results in a nice table, whereas \code{plot} draws the statistics against the order (i.e. the number of species) of the combination.
+   Function \code{indicators} creates explores the indicator value of the simultaneous occurrence of sets of species (i.e. species combinations). The maximum number of species conforming the species combination can be controlled using \code{max.order}. For each combination of species it determines its positive predictive value (A), sensitivity (B) and the square root of indicator value (sqrtIV). If \code{nboot>0} then bootstrap confidence intervals are determined with the specified \code{alpha} level. The combinations to be kept can be restricted to those whose positive predictive value, sensitivity and/or indicator value are equal or greater than input thresholds. Function \code{print} allows printing the results in a nice table, whereas \code{plot} draws the statistics against the order (i.e. the number of species) of the combination.
 }
 \value{
-  An object of class \code{speciescomb} with:
+  An object of class \code{indicators} with:
   \item{C}{A matrix describing all the combinations studied.}
   \item{XC}{A matrix containing the abundance/occurrence of each species combination.}
   \item{A}{Positive predictive power of species combinations. If \code{nboot>0} then this includes the lower and upper bounds of the confidence interval.}
@@ -74,7 +75,7 @@ B=strassoc(wetland, cluster=wetkm$cluster,func="B")
 sel=which(B[,1]>0.2) 
 
 ## Run indicator analysis with species combinations for the first group
-sc=speciescomb(X=wetland[,sel], cluster=wetkm$cluster, group=1, verbose=TRUE, At=0.5, Bt=0.2)
+sc= indicators(X=wetland[,sel], cluster=wetkm$cluster, group=1, verbose=TRUE, At=0.5, Bt=0.2)
 
 #Prints the results
 print(sc)
@@ -82,6 +83,10 @@ print(sc)
 ## Plots positive predictive power and sensitivity against the order of combinations
 plot(sc, type="A")
 plot(sc, type="B")
+
+## Run indicator analysis with species combinations for the first group, 
+## but forcing 'Orysp' to be in all combinations
+sc2= indicators(X=wetland[,sel], cluster=wetkm$cluster, group=1, verbose=TRUE, At=0.5, Bt=0.2, enableFixed=TRUE)
 
 
 }

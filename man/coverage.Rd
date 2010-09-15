@@ -9,14 +9,17 @@
  Function \code{coverage} calculates the proportion of sites of the target site group where one or another indicator (species combination) is found. Function \code{plotcoverage} plots the coverage against the positive predictive value threshold used to select indicators.
 }
 \usage{
-coverage(speciescomb, selection=NULL) 
-plotcoverage(speciescomb, by=0.05, ...)
+coverage(x, selection=NULL) 
+plotcoverage(x, by=0.05, type="stat", max.order=NULL, add=FALSE , ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{speciescomb}{An object of class '\code{\link{speciescomb}}'.}
+  \item{x}{An object of class '\code{\link{indicators}}'.}
   \item{selection}{A logical vector restricting the set of indicators used to calculate the coverage.}
   \item{by}{Rate of increase in the predictive value threshold (At).}
+  \item{type}{Specifies how to calculated the coverage: from the A statistic (\code{type = "stat"}), the lower bound of its confidence interval (\code{type = "lowerCI"}) or the upper bound (\code{type = "upperCI"}).}
+  \item{max.order}{The maximum number of species conforming species combinations (allows examining the effects of increasing the order of combinations).}
+  \item{add}{Flag indicating whether the function should draw on the existing plot.}
   \item{...}{Additional plotting parameters that are passed to the \code{plot} function.}
 }
 \value{
@@ -31,7 +34,7 @@ De \enc{Cáceres}{Caceres}, M. and Legendre, P. 2009. Associations between speci
 \author{
 Miquel De \enc{Cáceres}{Caceres} Ainsa, Biodiversity and Landscape Ecology Laboratory, Forest Science Center of Catalonia
 }
-\seealso{\code{\link{speciescomb}}, \code{\link{pruneindicators}}}
+\seealso{\code{\link{indicators}}, \code{\link{pruneindicators}}}
 \examples{
 library(stats)
 
@@ -47,13 +50,14 @@ B=strassoc(wetland, cluster=wetkm$cluster,func="B")
 sel=which(B[,1]>0.2) 
 
 ## Run indicator analysis with species combinations for the first group
-sc=speciescomb(X=wetland[,sel], cluster=wetkm$cluster, group=1, verbose=TRUE, At=0.5, Bt=0.2)
+sc= indicators(X=wetland[,sel], cluster=wetkm$cluster, group=1, verbose=TRUE, At=0.5, Bt=0.2)
 
 ## Determine the coverage of the selected set of indicators
 coverage(sc)
 
 ## Plot the coverage against the threshold At
 plotcoverage(sc)
+plotcoverage(sc, max.order=2, add=TRUE, lty=2)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

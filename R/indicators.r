@@ -1,6 +1,4 @@
-#For any combination of species within the given data calculate the probability that the plot observation
-#belongs to the given type once the species in the combination have been found altogether.
-speciescomb <- function (X, cluster, group, func="IndVal", max.order = 5, At = 0, Bt=0, sqrtIVt =0, nboot=0, alpha=0.05, XC = TRUE, verbose=FALSE) {
+indicators <- function (X, cluster, group, func="IndVal", max.order = 5, At = 0, Bt=0, sqrtIVt =0, nboot=0, alpha=0.05, XC = TRUE, enableFixed = FALSE, verbose=FALSE) {
 	                 
   func <- match.arg(func, c("IndVal", "IndVal.g"))                                                                                                             
   if(sum(is.na(cluster))>0) stop("Cannot deal with NA values. Remove and run again.")
@@ -24,23 +22,42 @@ speciescomb <- function (X, cluster, group, func="IndVal", max.order = 5, At = 0
   if(verbose) cat(paste("Number of sites:",nsites,"\n"))
   if(verbose) cat(paste("Size of the site group:",ng,"\n"))
   
+  #Study frequency
+  freq = colSums(ifelse(X[group.vec,]>0,1,0))/sum(group.vec)
+  if(enableFixed) {
+    fixedSpecies = (freq==1)
+  } else {
+    fixedSpecies = rep(FALSE, length(spplist))
+  }
+  numFixed = sum(fixedSpecies)
+  if(verbose & enableFixed) cat(paste("Number of fixed species:",numFixed,"\n"))
+  fixedPos = which(fixedSpecies)
+  if(verbose & numFixed>0) print(fixedPos)
+  
   #Create structures to store data
-  Cvalid<-matrix(0,nrow=0,ncol=length(spplist))
   Astat = numeric(0)
   Bstat = numeric(0)
   sqrtIVstat = numeric(0)
-  k = length(spplist)
+  k = length(spplist)-numFixed #Number of species to combine
+  if(verbose & enableFixed) cat(paste("Number of species to combine: ",k,"\n", sep=""))
+  veck = (1:length(spplist))[!fixedSpecies] #Vector of species indices to combine
+  Cvalid<-matrix(0,nrow=0,ncol=length(spplist))
   totco = 0 
   for(j in 1:min(max.order, k)) {
       co <- combn(k,j)
       totco = totco + ncol(co)
-	  if(verbose) cat(paste("Evaluating ", ncol(co) ," combinations of ",j," species",sep=""))
+	  if(verbose) {
+      if(numFixed>0) cat(paste("Evaluating ", ncol(co) ," combinations of (", numFixed, ")+",j," species",sep=""))
+      else cat(paste("Evaluating ", ncol(co) ," combinations of ",j," species",sep=""))
+	  }
 	  A=rep(NA,ncol(co))
-  	  B=rep(NA,ncol(co))
+  	B=rep(NA,ncol(co))
 	  for(r in 1:ncol(co)) {
   		  if(ncol(co)>100) if(r%%round(ncol(co)/10)==0 && verbose) cat(".")
-  		  if(j==1) sc.ab<-X[,co[,r]]
-  		  else sc.ab<-apply(X[,co[,r]],1,min)
+        if(numFixed>0) Xco<-X[,c(veck[co[,r]],fixedPos)]
+        else Xco<-X[,co[,r]]
+  		  if((j+numFixed)==1) sc.ab<- Xco
+  		  else sc.ab<-apply(Xco,1,min)
   		  if(sum(sc.ab)>0) {
   			scg = sc.ab[group.vec]
   			if(func=="IndVal.g") {
@@ -59,9 +76,12 @@ speciescomb <- function (X, cluster, group, func="IndVal", max.order = 5, At = 0
  	  sel[is.na(sel)] = FALSE
 	  if(verbose) cat(paste(" - ", sum(sel), " valid combinations.\n", sep=""))
 	  if(sum(sel)>0) {
-   	   	epn <- matrix(0,nrow=sum(sel),ncol=k)
+   	   	epn <- matrix(0,nrow=sum(sel),ncol=length(spplist))
    	   	indices = which(sel)
-      	for(i in 1:length(indices)) epn[i,co[,indices[i]]] <- 1
+      	for(i in 1:length(indices)) {
+          if(numFixed>0) epn[i,c(veck[co[,indices[i]]],fixedPos)] <- 1
+          else epn[i,co[,indices[i]]] <- 1
+      	}
 	  	Astat = c(Astat,A[sel])
 	  	Bstat = c(Bstat,B[sel])
 	  	sqrtIVstat= c(sqrtIVstat,sqrtIV[sel])
@@ -101,24 +121,25 @@ speciescomb <- function (X, cluster, group, func="IndVal", max.order = 5, At = 0
   		XC = data.frame(matrix(0, nrow=nrow(X), ncol=nc))
   		names(XC) =  row.names(Cvalid)
   	}
-  	else XC = data.frame(rep(0,length(nrow(X))))
+  	else XC = data.frame(rep(0,nrow(X)))  
   	for(r in 1:nc) {
   		if(nc>100) if(r%%round(nrow(Cvalid)/10)==0 && verbose) cat(".")
   		if(nc>1 && nspp>1) {
   			if(sum(Cvalid[r,])==1) XC[,r]<-X[,Cvalid[r,]==1]
 	  		else XC[,r]<-apply(X[, Cvalid[r,]==1],1,min)
 	  	} else if(nc==1 && nspp>1) {
-	  		if(sum(Cvalid)==1) XC<-X[,Cvalid==1] 
-	  		else XC<-apply(X[, Cvalid==1],1,min)
+        if(sum(Cvalid)==1) XC[,1]<-X[,Cvalid==1] 
+	  		else XC[,1]<-apply(X[, Cvalid==1],1,min)
 	  	} else if(nc==1 && nspp==1) {
 	  		XC<-X 
 	  	}
   	}
+  	
   	if(verbose) cat(paste("\n"))
   } else {
   	XC = NULL
   }
-  
+
   #Calculate bootstrap confidence intervals for sensitivity and ppp of valid combinations
   if(nboot>0) {
   	  if(nboot<100) nboot=100 #Minimum of 100 bootstrap replicates
@@ -177,7 +198,7 @@ speciescomb <- function (X, cluster, group, func="IndVal", max.order = 5, At = 0
   }
   
   result = list(C=Cvalid, XC=XC, A=sA, B=sB, sqrtIV=sIV, group.vec =group.vec)
-  class(result) = "speciescomb"
+  class(result) = "indicators"
   return(result)
 }
 

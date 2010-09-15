@@ -1,4 +1,4 @@
-plot.speciescomb<-function(x, type="sqrtIV", maxline=TRUE, ...) {
+plot.indicators<-function(x, type="sqrtIV", maxline=TRUE, ...) {
    A = x$A
    B = x$B
    sqrtIV=x$sqrtIV

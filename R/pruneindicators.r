@@ -1,9 +1,9 @@
-pruneindicators<-function(speciescomb, At=0, Bt=0, sqrtIVt=0, max.indicators=4, verbose=FALSE) {
+pruneindicators<-function(x, At=0, Bt=0, sqrtIVt=0, max.indicators=4, verbose=FALSE) {
 
-nonnested <- function (speciescomb, selection=NULL, verbose=FALSE) {
-	if(is.null(selection)) selection = rep(TRUE, nrow(speciescomb$C))
-	c = speciescomb$C[selection,]
-	xc = speciescomb$XC[, selection]
+nonnested <- function (x, selection=NULL, verbose=FALSE) {
+	if(is.null(selection)) selection = rep(TRUE, nrow(x$C))
+	c = x$C[selection,]
+	xc = x$XC[, selection]
 	combs = row.names(c)
   	keep = rep(TRUE, ncol(xc))
   	for(c1 in 1:ncol(xc)) {
@@ -26,31 +26,31 @@ nonnested <- function (speciescomb, selection=NULL, verbose=FALSE) {
   	return(combs[keep])
 }
 
-	initCoverage<-coverage(speciescomb)
-	if(verbose) cat(paste("Coverage of initial set of ",nrow(speciescomb$C)," indicators: ", round(initCoverage*100, digits=1),"%\n", sep=""))
+	initCoverage<-coverage(x)
+	if(verbose) cat(paste("Coverage of initial set of ",nrow(x$C)," indicators: ", round(initCoverage*100, digits=1),"%\n", sep=""))
 	
-	if(length(dim(speciescomb$A))==2) {
-		selection<- speciescomb$A$lowerCI>=At & speciescomb$B$lowerCI>=Bt & speciescomb$sqrtIV$lowerCI>=sqrtIVt
+	if(length(dim(x$A))==2) {
+		selection<- x$A$lowerCI>=At & x$B$lowerCI>=Bt & x$sqrtIV$lowerCI>=sqrtIVt
 	} else {
-		selection<- speciescomb$A>=At & speciescomb$B>=Bt & speciescomb$sqrtIV>=sqrtIVt
+		selection<- x$A>=At & x$B>=Bt & x$sqrtIV>=sqrtIVt
 	}
     if(sum(selection)==0) {
     	if(verbose) cat(paste("No indicator is valid using the given thresholds."))
     	return()
     }
-	validCoverage<-coverage(speciescomb, selection)
+	validCoverage<-coverage(x, selection)
 	if(verbose) cat(paste("Coverage of valid set of ",sum(selection)," indicators: ", round(validCoverage*100, digits=1),"%\n", sep=""))
 	
 	if(sum(selection)>1) {
-	    NN <-nonnested(speciescomb, selection=selection, verbose=FALSE)
-		selection <- row.names(speciescomb$C) %in% NN
-		nnCoverage<-coverage(speciescomb, selection)
+	    NN <-nonnested(x, selection=selection, verbose=FALSE)
+		selection <- row.names(x$C) %in% NN
+		nnCoverage<-coverage(x, selection)
 		if(verbose) cat(paste("Coverage of valid set of ",sum(selection)," nonnested indicators: ", round(nnCoverage*100, digits=1),"%\n", sep=""))
 	
 	
-		c = speciescomb$C[selection,]
-		group.vec = speciescomb$group.vec
-		xc = speciescomb$XC[, selection]
+		c = x$C[selection,]
+		group.vec = x$group.vec
+		xc = x$XC[, selection]
 
 		#Preliminaries	
   		spnames = names(c)
@@ -71,7 +71,7 @@ nonnested <- function (speciescomb, selection=NULL, verbose=FALSE) {
 	      		selmod = selection
 	      		selmod[selection]=FALSE
 	      		selmod[selection][co[,coi]]=TRUE
-	      		coicov = coverage(speciescomb, selmod)
+	      		coicov = coverage(x, selmod)
 	      		if(coicov>maxcov) {
 	      		   bestAtPoint= coi
 	      		   maxcov = coicov
@@ -83,7 +83,7 @@ nonnested <- function (speciescomb, selection=NULL, verbose=FALSE) {
 	      		best = which(keep2)[1]
 	      		selmodFinal[selection]=FALSE
 	      		selmodFinal[selection][co[,best]]=TRUE
-	      		finalCoverage<-coverage(speciescomb, selmodFinal)
+	      		finalCoverage<-coverage(x, selmodFinal)
 				if(verbose) cat(paste("Coverage of final set of ", j, " indicators: ",round(finalCoverage*100,digits=1),"%\n", sep=""))
 	      		continue = FALSE
 	      	} else {
@@ -100,36 +100,36 @@ nonnested <- function (speciescomb, selection=NULL, verbose=FALSE) {
 		if(verbose) cat(paste("One valid indicator only. Stopping.\n", sep=""))
 		selmodFinal = selection
 	}
-    speciescomb2 = speciescomb
-    speciescomb2$C = as.data.frame(subset(speciescomb2$C, subset=selmodFinal))
-    speciescomb2$XC = speciescomb2$XC[,selmodFinal]
-    if(length(dim(speciescomb2$A))==2) {
-    	speciescomb2$A = speciescomb2$A[selmodFinal,]
-	    speciescomb2$B = speciescomb2$B[selmodFinal,]
-    	speciescomb2$sqrtIV = speciescomb2$sqrtIV[selmodFinal,]
+    indicators2 = x
+    indicators2$C = as.data.frame(subset(indicators2$C, subset=selmodFinal))
+    indicators2$XC = indicators2$XC[,selmodFinal]
+    if(length(dim(indicators2$A))==2) {
+    	indicators2$A = indicators2$A[selmodFinal,]
+	    indicators2$B = indicators2$B[selmodFinal,]
+    	indicators2$sqrtIV = indicators2$sqrtIV[selmodFinal,]
     } else {
-    	speciescomb2$A = speciescomb2$A[selmodFinal]
-	    speciescomb2$B = speciescomb2$B[selmodFinal]
-    	speciescomb2$sqrtIV = speciescomb2$sqrtIV[selmodFinal]
+    	indicators2$A = indicators2$A[selmodFinal]
+	    indicators2$B = indicators2$B[selmodFinal]
+    	indicators2$sqrtIV = indicators2$sqrtIV[selmodFinal]
     }
 
-  	selSpp = colSums(speciescomb2$C)>0
-  	speciescomb2$C = as.data.frame(speciescomb2$C[,selSpp])
-  	row.names(speciescomb2$C)<-row.names(speciescomb$C)[selmodFinal]
-  	names(speciescomb2$C)<-names(speciescomb$C)[selSpp]
+  	selSpp = colSums(indicators2$C)>0
+  	indicators2$C = as.data.frame(indicators2$C[,selSpp])
+  	row.names(indicators2$C)<-row.names(x$C)[selmodFinal]
+  	names(indicators2$C)<-names(x$C)[selSpp]
   	
     #Select rows that contain the species or the group
     if(sum(selmodFinal)>1) {
-	  	selRows = rowSums(speciescomb2$XC)>0 | speciescomb2$group.vec
-	  	speciescomb2$group.vec = speciescomb2$group.vec[selRows]
-	  	speciescomb2$XC = speciescomb2$XC[selRows,]
+	  	selRows = rowSums(indicators2$XC)>0 | indicators2$group.vec
+	  	indicators2$group.vec = indicators2$group.vec[selRows]
+	  	indicators2$XC = indicators2$XC[selRows,]
 	} else {
-	  	selRows = sum(speciescomb2$XC) | speciescomb2$group.vec
-	  	speciescomb2$group.vec = speciescomb2$group.vec[selRows]
-	  	speciescomb2$XC = speciescomb2$XC[selRows]
+	  	selRows = sum(indicators2$XC) | indicators2$group.vec
+	  	indicators2$group.vec = indicators2$group.vec[selRows]
+	  	indicators2$XC = indicators2$XC[selRows]
 	}
     
-	return(speciescomb2)
+	return(indicators2)
 }
 
 
