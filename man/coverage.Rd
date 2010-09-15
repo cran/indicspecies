@@ -1,19 +1,23 @@
 \encoding{UTF-8}
 \name{coverage}
 \alias{coverage}
+\alias{plotcoverage}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Determines the coverage of a set of indicators}
+\title{Coverage of a set of indicators}
 \description{
- Calculates the proportion of sites of the target site group where one or another indicator (species combination) is found.
+ Function \code{coverage} calculates the proportion of sites of the target site group where one or another indicator (species combination) is found. Function \code{plotcoverage} plots the coverage against the positive predictive value threshold used to select indicators.
 }
 \usage{
 coverage(speciescomb, selection=NULL) 
+plotcoverage(speciescomb, by=0.05, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{speciescomb}{An object of class '\code{\link{speciescomb}}'.}
   \item{selection}{A logical vector restricting the set of indicators used to calculate the coverage.}
+  \item{by}{Rate of increase in the predictive value threshold (At).}
+  \item{...}{Additional plotting parameters that are passed to the \code{plot} function.}
 }
 \value{
   The proportion of sites of the target site group where one or another indicator (species combination) is found.
@@ -47,6 +51,9 @@ sc=speciescomb(X=wetland[,sel], cluster=wetkm$cluster, group=1, verbose=TRUE, At
 
 ## Determine the coverage of the selected set of indicators
 coverage(sc)
+
+## Plot the coverage against the threshold At
+plotcoverage(sc)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

@@ -1,7 +1,9 @@
-eee5278fa47714aaf3b1dea7c0300a80 *DESCRIPTION
+df14648e113fe3bc95a3c9ee0685abb4 *DESCRIPTION
+9fdfeb11f7ddba6f3aab9aaa6b1ac5dd *NAMESPACE
 38a98d851b0711fe7089647211db7a1b *R/coverage.r
 9dc4e9e91cd5f0b3de604e7b0bf75901 *R/multipatt.r
-721050918e1168d7426ab7d1fd5ee6aa *R/plot.speciescomb.r
+1366ad1911fe82da4e8701ea8a91737b *R/plot.speciescomb.r
+13b751bd2c667be802f5cf4cf1f518ff *R/plotcoverage.r
 4e33fe9fc027888637ad06843f734f98 *R/print.speciescomb.r
 f5b3e882498e420fc623a682eb9ea3fa *R/pruneindicators.r
 fae379d2c1736c1624a3a3e800900a0e *R/signassoc.r
@@ -10,8 +12,8 @@ fae379d2c1736c1624a3a3e800900a0e *R/signassoc.r
 89006c55d54853d257c9bccc22a0656e *R/summary.multipatt.r
 77f2e5117f9c5a5c2efb7aa44bfe51c6 *data/wetland.rda
 e70c725ca0cbf64b2cd7a4bb86771e30 *inst/CITATION
-dfd291eb4d09c43c7f3df82a63e14c0d *man/coverage.Rd
-fb4ae48a6d8da01bb35d7db667155435 *man/indicspecies-package.Rd
+4a6edd83d8d8791318ce75552cbcdf6a *man/coverage.Rd
+97094c70f43d3e83f80e88679bfd5f0e *man/indicspecies-package.Rd
 8409682bf85d38c8127ac9ecf954c36b *man/multipatt.Rd
 1d8e3fa2ea014b02a498e0a88a800fb4 *man/pruneindicators.Rd
 5542912bf2de37aecd0192156bd1e387 *man/signassoc.Rd

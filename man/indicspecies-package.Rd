@@ -13,9 +13,9 @@ This package provides a set of functions to assess the strength of species site 
 \tabular{ll}{
 Package: \tab indicspecies\cr
 Type: \tab Package\cr
-Version: \tab 1.6.0\cr
+Version: \tab 1.6.2\cr
 Date: \tab 2008-10-23\cr
-License: \tab GPL version 2 or newer\cr
+License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
 }
 Use \code{\link{strassoc}} for assessing strength of associations and \code{\link{signassoc}} to assess the statistical significance of the associations. A much more complete function is \code{\link{multipatt}}.
