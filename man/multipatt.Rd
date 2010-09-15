@@ -1,0 +1,65 @@
+\encoding{UTF-8}
+\name{multipatt}
+\alias{multipatt}
+
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{Multi-level pattern analysis}
+\description{
+ This function studies the association between species patterns and combinations of groups of sites. 
+}
+\usage{
+multipatt(x, cluster, func = "IndVal.g", duleg=FALSE, restcomb=NULL, nperm=999, torus=FALSE, grid.size, print.perm=FALSE)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{x}{Community data table}
+  \item{cluster}{A vector representing a partition of sites}
+  \item{func}{Species-site group association function}
+  \item{duleg}{If TRUE, site group combinations are not considered, only the original site groups, like in Dufrêne & Legendre (1997)}
+  \item{restcomb}{A vector of integer values used to restrict the combinations of site groups to those with ecological sense according to the analyst. The default \code{NULL} indicates that all combinations are used. If \code{duleg=TRUE} this argument is ignored.} 
+  \item{nperm}{Number of permutations to be done.}
+  \item{torus}{Whether permutations should be restricted using torus translation (Fortin & Dale 2005).}
+  \item{grid.size}{Dimensions of grid in torus translation.}
+  \item{print.perm}{If TRUE, prints permutation numbers after each set of 100 permutations.}
+}
+\details{
+   This function creates combinations of the input clusters and compares each combination with the species in the input matrix x. For each species it chooses the combination with a highest association value. Best matching patterns are tested for statistical significance of the associations. Four association indices are possible (some less than for \code{\link{strassoc}}): "IndVal", "IndVal.g", "r" and "r.g". Indicator value indices will return the pattern that better matches the species observed pattern, whereas correlation indices will return the pattern that creates a highest inside/outside difference. Details are given in De \enc{Cáceres}{Caceres} et al. (submitted). The user can restrict the combinations in two ways: (1) by using \code{duleg=TRUE}, which leads to consider single site-groups only; or (2) by using \code{restcomb} to restrict combinations at will. In order to carry out the second way, values in \code{restcomb} must be the indices of combinations that appear in the column \code{index} of object \code{sign} (see below).
+}
+\value{
+  An object of class \code{multipatt} with:
+  \item{func}{The name of the function used}
+  \item{comb}{A matrix describing all the combinations studied}
+  \item{str}{A matrix the association strength for all combinations studied}
+  \item{sign}{Data table with results of the best matching pattern, the association value and statistical significance of the association}
+}
+\note{
+This function gives the same results as function \code{duleg} in package "labdsv" when used setting \code{func="IndVal.g"} and \code{duleg=TRUE}, excepting the fact that the square root IndVal values is returned instead of the original IndVal.
+}
+\references{
+De \enc{Cáceres}{Caceres}, M. and Legendre, P. 2009. Associations between species and groups of sites: indices and statistical inference. Ecology 90(12): 3566-3574.
+
+De \enc{Cáceres}{Caceres}, M., Legendre, P., Moretti, M. 2010. Improving indicator species analysis by combining groups of sites. Oikos 119(10): 1674-1684.
+
+\enc{Dufrêne}{Dufrene}, M. and P. Legendre. 1997. Species assemblages and indicator species: The need for a flexible asymetrical approach. Ecological Monographs 67:345-366.
+
+Fortin, M. J. and M. R. T. Dale. 2005. Spatial Analysis: A Guide for Ecologists. Cambridge University Press.
+}
+\author{
+Miquel De \enc{Cáceres}{Caceres} Ainsa, Biodiversity and Landscape Ecology Laboratory, Centre Tecnologic Forestal de Catalunya
+
+Florian Jansen, Institute of Botany and Landscape Ecology, Ernst-Moritz-Arndt-University
+}
+\seealso{\code{\link{summary.multipatt}}, \code{\link{strassoc}}, \code{\link{signassoc}}}
+\examples{
+library(stats)
+
+data(wetland) ## Loads species data
+
+wetkm = kmeans(wetland, centers=3) ## Creates three clusters using kmeans
+
+wetpt = multipatt(wetland, wetkm$cluster) ## Runs the combination analysis using IndVal.g as statistic
+
+summary(wetpt) ## Lists those species with significant association to one combination
+}
+% Add one or more standard keywords, see file 'KEYWORDS' in the
+% R documentation directory.
