@@ -9,8 +9,10 @@
 Function \code{coverage} calculates the proportion of sites of the target site group where one or another indicator (a species or a species combination) is found. Parameters are used to select valid indicators before calculating coverage. Function \code{plotcoverage} plots the coverage against the positive predictive value threshold used to select indicators.
 }
 \usage{
-coverage(x, y=NULL, selection=NULL, minstat=NULL, At=NULL, Bt=NULL, type="stat", alpha=0.05) 
-plotcoverage(x, y=NULL, by=0.05, type="stat", max.order=NULL, group = NULL,  alpha = 0.05, add=FALSE, ...)
+coverage(x, y=NULL, selection=NULL, minstat=NULL, At=NULL, Bt=NULL, type="stat", 
+alpha=0.05) 
+plotcoverage(x, y=NULL, by=0.05, type="stat", max.order=NULL, group = NULL,  
+alpha = 0.05, add=FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

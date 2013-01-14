@@ -38,10 +38,15 @@ Manly, B. F. J. 1997. Randomization, bootstrap and Monte Carlo methods in biolog
 \author{Miquel De \enc{Cáceres}{Caceres} Ainsa,  Biodiversity and Landscape Ecology Laboratory, Centre Tecnologic Forestal de Catalunya}
 \seealso{\code{\link{signassoc}}, \code{\link{multipatt}}}
 \examples{
-data(wetland) ## Load species data
-wetkm = kmeans(wetland, centers=3)## Create three clusters using
+## Load species data
+data(wetland) 
 
-strassoc(wetland, wetkm$cluster, func="IndVal.g") ## Compute Dufrene and Legendre's IndVal
+## Create three clusters using
+wetkm = kmeans(wetland, centers=3)
 
-strassoc(wetland, wetkm$cluster, func="r", nboot =100) ## Compute point-biserial correlation, with bootstrap 95 percent confidence intervals
+## Compute Dufrene and Legendre's IndVal
+strassoc(wetland, wetkm$cluster, func="IndVal.g") 
+
+## Compute point-biserial correlation, with bootstrap 95 percent confidence intervals
+strassoc(wetland, wetkm$cluster, func="r", nboot =100) 
 }

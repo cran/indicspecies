@@ -6,7 +6,6 @@
 %\VignetteIndexEntry{Learning how to use the indicspecies package}
 %\VignettePackage{indicspecies}
 
-
 \title{How to use the \texttt{indicspecies} package (ver. 1.6.7)}
 \author[1]{Miquel De Cáceres}
 \affil[1]{Centre Tecnològic Forestal de Catalunya. Ctra. St. Llorenç de Morunys km 2, 25280, Solsona, Catalonia, Spain}
@@ -285,6 +284,15 @@ print(sc2)
 @
 In our example, and using these thresholds, the best indicators would be: (1) the combination of `Phynod' and `Elesp.'; (2) `Cyprot' and (3) `Echpas' and `Phynod'. The three indicators together cover 93\% of the sites belonging to the target site group.
 
+\subsection{The function \texttt{predict.indicators}}
+The function \texttt{indicators} provides a model that can be used to predict a target site group. Once a given combination of species has been found, the corresponding \texttt{A} value is the probability of being in the target site group given the combination of species has been found. Therefore, the set of indicators could be used to predict the likelihood of the target site group in a new data set. The function \texttt{predict.indicators} has exactly this role. It takes the results of \texttt{indicators} and a new community data matrix as input. Given this input, the function calculates the probability of the target site group for each site. The following code exemplifies the use of \texttt{predict.indicators} with the same data that was used for the calibration of the indicator model (a new community data matrix should be used in normal applications):
+<<>>=
+p<-predict(sc2, wetland)
+@
+We can compare the results with the original group memberships:
+<<>>=
+print(data.frame(groups,p))
+@
 \bibliographystyle{plainnat}
 \bibliography{indicspecies}
 \end{document}

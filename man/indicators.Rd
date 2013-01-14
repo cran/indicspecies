@@ -10,7 +10,8 @@
  Determines the indicator value of species combinations. 
 }
 \usage{
-indicators(X, cluster, group, func="IndVal", max.order=5, At=0, Bt=0, sqrtIVt=0, nboot=0, alpha=0.05, XC=TRUE, enableFixed = FALSE, verbose = FALSE)
+indicators(X, cluster, group, func="IndVal", max.order=5, max.indicators=NULL, 
+At=0, Bt=0, sqrtIVt=0, nboot=0, alpha=0.05, XC=TRUE, enableFixed = FALSE, verbose = FALSE)
 \method{print}{indicators} (x, At=0, Bt=0, sqrtIVt=0, selection=NULL, confint=FALSE,...)
 \method{plot}{indicators} (x, type="sqrtIV", maxline=TRUE,...)
 }
@@ -21,9 +22,10 @@ indicators(X, cluster, group, func="IndVal", max.order=5, At=0, Bt=0, sqrtIVt=0,
   \item{cluster}{A vector containing the classification of sites into site groups.}
   \item{group}{The label corresponding to the target site group. }
   \item{max.order}{Maximum number of species conforming species combinations.}
+  \item{max.indicators}{Maximum number of valid indicators to be kept. If \code{NULL}, then all valid indicators are kept.}
   \item{func}{The indicator value variant to be used, either "IndVal" (non-equalized) or "IndVal.g" (group-equalized).}
-  \item{At}{Threshold for positive predictive value. Combinations with lower values are not kept.}
-  \item{Bt}{Threshold for sensitivity. Combinations with lower values are not kept.}
+  \item{At}{Threshold for positive predictive value used to select valid indicators. Combinations with lower values are not kept.}
+  \item{Bt}{Threshold for sensitivity used to select valid indicators. Combinations with lower values are not kept.}
   \item{sqrtIVt}{Threshold for (square root of) indicator value. Combinations with lower values are not kept.}
   \item{nboot}{Number of bootstrap samples for confidence intervals.}
   \item{alpha}{Error in confidence intervals.}
@@ -59,7 +61,7 @@ De \enc{Cáceres}{Caceres}, M. and Legendre, P. 2009. Associations between speci
 \author{
 Miquel De \enc{Cáceres}{Caceres} Ainsa, Biodiversity and Landscape Ecology Laboratory, Forest Science Center of Catalonia
 }
-\seealso{\code{\link{pruneindicators}}, \code{\link{coverage}}, \code{\link{multipatt}}, \code{\link{strassoc}}, \code{\link{signassoc}}}
+\seealso{\code{\link{predict.indicators}},\code{\link{pruneindicators}}, \code{\link{coverage}}, \code{\link{multipatt}}, \code{\link{strassoc}}, \code{\link{signassoc}}}
 \examples{
 library(stats)
 
@@ -75,18 +77,21 @@ B=strassoc(wetland, cluster=wetkm$cluster,func="B")
 sel=which(B[,1]>0.2) 
 
 ## Run indicator analysis with species combinations for the first group
-sc= indicators(X=wetland[,sel], cluster=wetkm$cluster, group=1, verbose=TRUE, At=0.5, Bt=0.2)
+sc= indicators(X=wetland[,sel], cluster=wetkm$cluster, group=1, verbose=TRUE, 
+               At=0.5, Bt=0.2)
 
 #Prints the results
 print(sc)
 
-## Plots positive predictive power and sensitivity against the order of combinations
+## Plots positive predictive power and sensitivity against the order of 
+## combinations
 plot(sc, type="A")
 plot(sc, type="B")
 
 ## Run indicator analysis with species combinations for the first group, 
 ## but forcing 'Orysp' to be in all combinations
-sc2= indicators(X=wetland[,sel], cluster=wetkm$cluster, group=1, verbose=TRUE, At=0.5, Bt=0.2, enableFixed=TRUE)
+sc2= indicators(X=wetland[,sel], cluster=wetkm$cluster, group=1, verbose=TRUE, 
+                At=0.5, Bt=0.2, enableFixed=TRUE)
 
 
 }

@@ -29,15 +29,21 @@ Miquel De \enc{Cáceres}{Caceres} Ainsa, Biodiversity and Landscape Ecology Labo
 \examples{
 library(stats)
 
-data(wetland) ## Loads species data
+## Loads species data
+data(wetland) 
 
-wetkm = kmeans(wetland, centers=3) ## Creates three clusters using kmeans
+## Creates three clusters using kmeans
+wetkm = kmeans(wetland, centers=3) 
 
-wetpt = multipatt(wetland, wetkm$cluster) ## Runs the combination analysis using IndVal.g as statistic
+## Runs the combination analysis using IndVal.g as statistic
+wetpt = multipatt(wetland, wetkm$cluster) 
 
-summary(wetpt) ## Lists those species with significant association to one combination
+## Lists those species with significant association to one combination
+summary(wetpt) 
 
-summary(wetpt, indvalcomp=TRUE) ## Lists those species with significant association to one combination. Includes indval components
+## Lists those species with significant association to one combination, 
+## including indval components
+summary(wetpt, indvalcomp=TRUE) 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

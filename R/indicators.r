@@ -1,4 +1,4 @@
-indicators <- function (X, cluster, group, func="IndVal", max.order = 5, At = 0, Bt=0, sqrtIVt =0, nboot=0, alpha=0.05, XC = TRUE, enableFixed = FALSE, verbose=FALSE) {
+indicators <- function (X, cluster, group, func="IndVal", max.order = 5, max.indicators=NULL, At = 0, Bt=0, sqrtIVt =0, nboot=0, alpha=0.05, XC = TRUE, enableFixed = FALSE, verbose=FALSE) {
 	                 
   func <- match.arg(func, c("IndVal", "IndVal.g"))                                                                                                             
   if(sum(is.na(cluster))>0) stop("Cannot deal with NA values. Remove and run again.")
@@ -34,112 +34,116 @@ indicators <- function (X, cluster, group, func="IndVal", max.order = 5, At = 0,
   fixedPos = which(fixedSpecies)
   if(verbose & numFixed>0) print(fixedPos)
   
-  #Create structures to store data
-  Astat = numeric(0)
-  Bstat = numeric(0)
-  sqrtIVstat = numeric(0)
+
+  evalCombs<-function(spvec, dvec, verbose=FALSE) {
+    comblist<-vector("list",0)
+    sc.ab<-apply(X[,spvec, drop=FALSE],1,min)
+    if(sum(sc.ab)>0) {
+      scg = sc.ab[group.vec]
+      if(func=="IndVal.g") {
+        mg = (sum(scg)/ng)
+        A = mg/sum(tapply(sc.ab,cluster, "mean"))
+      } else {
+        A = sum(scg)/sum(sc.ab)
+      }
+      B = sum(scg>0)/ng
+      sqrtIV = sqrt(A*B)
+      if(A>=At & B>=Bt & sqrtIV>=sqrtIVt) {  
+        comblist<-c(comblist,list(spvec))
+      }
+      if(B>Bt && (length(spvec)-numFixed)<max.order && length(dvec)>0) {##If B is not too small and order is allowed we can explore further
+        for(j in 1:length(dvec)) {
+          if(verbose) cat(paste("Starting species ",dvec[j],"..."))          
+          comblist<-c(comblist,evalCombs(c(spvec,dvec[j]), dvec[-(1:j)], verbose=FALSE))
+          if(verbose) cat(paste(" accepted combinations:",length(comblist),"\n"))
+        }      
+      }
+    } 
+    return(comblist)
+  }
   k = length(spplist)-numFixed #Number of species to combine
   if(verbose & enableFixed) cat(paste("Number of species to combine: ",k,"\n", sep=""))
   veck = (1:length(spplist))[!fixedSpecies] #Vector of species indices to combine
-  Cvalid<-matrix(0,nrow=0,ncol=length(spplist))
-  totco = 0 
-  for(j in 1:min(max.order, k)) {
-      co <- combn(k,j)
-      totco = totco + ncol(co)
-	  if(verbose) {
-      if(numFixed>0) cat(paste("Evaluating ", ncol(co) ," combinations of (", numFixed, ")+",j," species",sep=""))
-      else cat(paste("Evaluating ", ncol(co) ," combinations of ",j," species",sep=""))
-	  }
-	  A=rep(NA,ncol(co))
-  	B=rep(NA,ncol(co))
-	  for(r in 1:ncol(co)) {
-  		  if(ncol(co)>100) if(r%%round(ncol(co)/10)==0 && verbose) cat(".")
-        if(numFixed>0) Xco<-X[,c(veck[co[,r]],fixedPos)]
-        else Xco<-X[,co[,r]]
-  		  if((j+numFixed)==1) sc.ab<- Xco
-  		  else sc.ab<-apply(Xco,1,min)
-  		  if(sum(sc.ab)>0) {
-  			scg = sc.ab[group.vec]
-  			if(func=="IndVal.g") {
-  				mg = (sum(scg)/ng)
-		  		A[r] = mg/sum(tapply(sc.ab,cluster, "mean"))
-  			} else {
-  				A[r] = sum(scg)/sum(sc.ab)
-  			}
-  			B[r] = sum(scg>0)/ng
-    	  } 
-  	  }
-  	  sqrtIV = sqrt(A*B)
-	  #Remove non-valid combinations
- 	  sel = A>=At & B>=Bt & sqrtIV>=sqrtIVt
-	  #Remove combinations that do not have any co-occurrence (NAs)
- 	  sel[is.na(sel)] = FALSE
-	  if(verbose) cat(paste(" - ", sum(sel), " valid combinations.\n", sep=""))
-	  if(sum(sel)>0) {
-   	   	epn <- matrix(0,nrow=sum(sel),ncol=length(spplist))
-   	   	indices = which(sel)
-      	for(i in 1:length(indices)) {
-          if(numFixed>0) epn[i,c(veck[co[,indices[i]]],fixedPos)] <- 1
-          else epn[i,co[,indices[i]]] <- 1
-      	}
-	  	Astat = c(Astat,A[sel])
-	  	Bstat = c(Bstat,B[sel])
-	  	sqrtIVstat= c(sqrtIVstat,sqrtIV[sel])
-	  	Cvalid = rbind(Cvalid,epn)
-	  	rm(epn)
-	  }
-	  rm(co)
-	  rm(A)
-	  rm(B)
-	  rm(sqrtIV)
-  	  gc()
+  
+  comblistDef<-vector("list",0)
+  if(length(fixedPos)>0) {
+    comblistDef<-c(comblistDef,evalCombs(fixedPos, veck,verbose=TRUE))
+  } else {
+    for(i in 1:length(veck)) {
+      cat(paste("Starting species ",veck[i],"..."))
+      comblistDef<-c(comblistDef,evalCombs(c(veck[i],fixedPos), veck[-(1:i)], verbose=FALSE))
+      cat(paste(" accepted combinations:",length(comblistDef),"\n"))
+    }    
   }
-  if(verbose) cat(paste("Number of combinations explored: ",totco,"\n", sep=""))
-  if(verbose) cat(paste("Number of valid combinations: ",nrow(Cvalid),"\n", sep=""))
-  if(nrow(Cvalid)==0) return()
   
-  Cvalid = as.data.frame(Cvalid)
-  names(Cvalid)<-spplist
+  #Create structures to store data
+  nc = length(comblistDef)
+  if(verbose) cat(paste("Number of valid combinations: ",nc,"\n", sep=""))
+  if(nc==0) return()
+  trim =FALSE
+  if(!is.null(max.indicators)) {
+    if(nc>max.indicators) {
+      if(verbose) cat(paste("Maximum number of valid combinations exceeded.\n", sep=""))    
+      trim = TRUE
+    }
+  }
+  Astat = numeric(nc)
+  Bstat = numeric(nc)
+  if(trim) {
+    for(i in 1:nc) {
+      spvec = as.numeric(comblistDef[[i]])
+      sc.ab <-apply(X[,spvec, drop=FALSE],1,min)
+      scg = sc.ab[group.vec]
+      if(func=="IndVal.g") {
+        mg = (sum(scg)/ng)
+        Astat[i] = mg/sum(tapply(sc.ab,cluster, "mean"))
+      } else {
+        Astat[i] = sum(scg)/sum(sc.ab)
+      }
+      Bstat[i] = sum(scg>0)/ng
+    }
+    sqrtIVstat = sqrt(Astat*Bstat)    
+    sel = order(sqrtIVstat,decreasing = TRUE)[1:max.indicators]
+    Astat = Astat[sel]
+    Bstat = Bstat[sel]
+    sqrtIVstat = sqrtIVstat[sel]
+    nc = max.indicators
+    Cvalid<-as.data.frame(matrix(0,nrow=nc,ncol=length(spplist)))
+    names(Cvalid)<-spplist
+    XC = data.frame(matrix(0, nrow=nrow(X), ncol=nc))
+    for(i in 1:nc) {
+      spvec = as.numeric(comblistDef[[sel[i]]])
+      XC[,i] <-apply(X[,spvec, drop=FALSE],1,min)
+      Cvalid[i,spvec] = 1
+    }
+  } else {
+    Cvalid<-as.data.frame(matrix(0,nrow=nc,ncol=length(spplist)))
+    XC = data.frame(matrix(0, nrow=nrow(X), ncol=nc))
+    names(Cvalid)<-spplist
+    for(i in 1:nc) {
+      spvec = as.numeric(comblistDef[[i]])
+      sc.ab <-apply(X[,spvec, drop=FALSE],1,min)
+      XC[,i]<-sc.ab
+      scg = sc.ab[group.vec]
+      if(func=="IndVal.g") {
+        mg = (sum(scg)/ng)
+        Astat[i] = mg/sum(tapply(sc.ab,cluster, "mean"))
+      } else {
+        Astat[i] = sum(scg)/sum(sc.ab)
+      }
+      Bstat[i] = sum(scg>0)/ng
+      Cvalid[i,spvec] = 1
+    }
+    sqrtIVstat = sqrt(Astat*Bstat)    
+  }
   
-  nc <- nrow(Cvalid)
- 
   #Remove species that do not appear in any valid combination
   selSpp = colSums(Cvalid)>0
   if(verbose) cat(paste("Number of remaining species:",sum(selSpp),"\n"))
   Cvalid = Cvalid[,selSpp]
-  X = X[,selSpp]
   nspp <- sum(selSpp)
   
   
-  #Build abundance matrix for valid species combinations
-  if(XC || nboot>0) {
-  	if(verbose) {
-  	 cat(paste("Building abundance matrix"))
-  	}
-  
-  	if(nc>1) {
-  		XC = data.frame(matrix(0, nrow=nrow(X), ncol=nc))
-  		names(XC) =  row.names(Cvalid)
-  	}
-  	else XC = data.frame(rep(0,nrow(X)))  
-  	for(r in 1:nc) {
-  		if(nc>100) if(r%%round(nrow(Cvalid)/10)==0 && verbose) cat(".")
-  		if(nc>1 && nspp>1) {
-  			if(sum(Cvalid[r,])==1) XC[,r]<-X[,Cvalid[r,]==1]
-	  		else XC[,r]<-apply(X[, Cvalid[r,]==1],1,min)
-	  	} else if(nc==1 && nspp>1) {
-        if(sum(Cvalid)==1) XC[,1]<-X[,Cvalid==1] 
-	  		else XC[,1]<-apply(X[, Cvalid==1],1,min)
-	  	} else if(nc==1 && nspp==1) {
-	  		XC<-X 
-	  	}
-  	}
-  	
-  	if(verbose) cat(paste("\n"))
-  } else {
-  	XC = NULL
-  }
-
   #Calculate bootstrap confidence intervals for sensitivity and ppp of valid combinations
   if(nboot>0) {
   	  if(nboot<100) nboot=100 #Minimum of 100 bootstrap replicates

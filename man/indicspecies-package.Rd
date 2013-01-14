@@ -13,7 +13,7 @@ This package provides a set of functions to assess the strength and statistical 
 \tabular{ll}{
 Package: \tab indicspecies\cr
 Type: \tab Package\cr
-Version: \tab 1.6.7\cr
+Version: \tab 1.7.0\cr
 Date: \tab 2013-01-14\cr
 Depends: \tab permute \cr
 License: \tab GPL (>=2)\cr

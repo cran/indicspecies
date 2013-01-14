@@ -8,7 +8,8 @@
   Creates species combinations to be used in indicator value analyses. 
 }
 \usage{
-combinespecies(X, max.order = 3, min.occ = 0, FUN = min, verbose = FALSE, add.names = TRUE, ...)
+combinespecies(X, max.order = 3, min.occ = 0, FUN = min, verbose = FALSE, 
+add.names = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -49,7 +50,8 @@ wetkm = kmeans(wetland, centers=3)
 ## Calculate indicator value of species combinations for each of the three site groups
 strassoc(Y$XC, cluster=wetkm$cluster,func="IndVal.g") 
 
-## Calculate point biserial correlation value of species combinations for each of the three site groups
+## Calculate point biserial correlation value of species combinations 
+## for each of the three site groups
 strassoc(Y$XC, cluster=wetkm$cluster,func="r.g") 
 
 }
