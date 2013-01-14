@@ -1,4 +1,4 @@
-summary.multipatt <- function (object, alpha = 0.05, minstat = 0, indvalcomp=FALSE,...) {
+summary.multipatt <- function (object, alpha = 0.05, minstat = NULL, At = NULL, Bt=NULL, indvalcomp=FALSE,...) {
     x <- object
     ncomb = ncol(x$str)
     ncolsign = ncol(x$sign)
@@ -7,10 +7,21 @@ summary.multipatt <- function (object, alpha = 0.05, minstat = 0, indvalcomp=FAL
     cat("\n ---------------------------\n")
     cat("\n Association function:", x$func)
     cat("\n Significance level (alpha):", alpha)
-    cat("\n Minimum statistic value (minstat):", minstat, "\n")
-    cat("\n Total number of species:", nsps)
-    a = x$sign[!is.na(x$sign$p.value) & x$sign$p.value <= alpha & 
-	x$sign$stat > minstat, ]
+    if(!is.null(minstat)) cat("\n Minimum statistic value (minstat):", minstat)
+    if(x$func=="IndVal" || x$func=="IndVal.g") {
+      if(!is.null(At)) cat("\n Minimum positive predictive value (At):", At)
+      if(!is.null(Bt)) cat("\n Minimum sensitivity (Bt):", Bt)
+    }
+    cat("\n\n Total number of species:", nsps)
+    sel = !is.na(x$sign$p.value) & x$sign$p.value <= alpha
+    if(!is.null(minstat)) sel = sel & (x$sign$stat >= minstat)
+    if(!is.null(Bt) && !is.null(x$B)) {
+      for(i in 1:nrow(x$sign)) sel[i] = sel[i] && (x$B[i,x$sign$index[i]]>=Bt)
+    }
+    if(!is.null(At) && !is.null(x$A)) {
+      for(i in 1:nrow(x$sign)) sel[i] = sel[i] && (x$A[i,x$sign$index[i]]>=At)
+    }
+    a = x$sign[sel, ]
     cat("\n Selected number of species:", nrow(a), "\n")
     cols = (ncolsign - 1):ncolsign
     
@@ -37,10 +48,17 @@ summary.multipatt <- function (object, alpha = 0.05, minstat = 0, indvalcomp=FAL
 		 sum(rowSums(a[, 1:(ncolsign-3)]) == k), "\n")
 	    sum = sum + choose(ncolsign-3, k)
 	}
-	m = y[x$sign$index == i & !is.na(x$sign$p.value) & 
-	    x$sign$p.value <= alpha & x$sign$stat > minstat, ]
+	sel = x$sign$index == i & !is.na(x$sign$p.value) & x$sign$p.value <= alpha
+	if(!is.null(minstat)) sel = sel & (x$sign$stat >= minstat)
+	if(!is.null(Bt) && !is.null(x$B)) {
+	  for(j in 1:nrow(x$sign)) sel[j] = sel[j] && (x$B[j,x$sign$index[j]]>=Bt)
+	}
+	if(!is.null(At) && !is.null(x$A)) {
+	  for(j in 1:nrow(x$sign)) sel[j] = sel[j] && (x$A[j,x$sign$index[j]]>=At)
+	}
+	m = y[sel, ]
 	if (nrow(m) > 0) {
-	    cat("\n Group", dimnames(x$comb)[[2]][i], " #sps. ", nrow(m), "\n")
+	    cat("\n Group", colnames(x$comb)[i], " #sps. ", nrow(m), "\n")
 	    m = m[order(m$stat, decreasing = TRUE), cols]
 	    printCoefmat(m, signif.stars = TRUE, signif.legend = FALSE, 
 		digits = 4, P.values = TRUE, has.Pvalue = TRUE)

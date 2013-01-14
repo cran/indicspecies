@@ -7,14 +7,16 @@
  This is a \code{summary} function for \code{multipatt} objects. 
 }
 \usage{
-\method{summary}{multipatt}(object, alpha=0.05, minstat=0.0, indvalcomp=FALSE, ...)
+\method{summary}{multipatt}(object, alpha=0.05, minstat=NULL, At = NULL, Bt=NULL, indvalcomp=FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{An object returned by function \code{\link{multipatt}}.}
   \item{alpha}{Significance level for selecting species in the summary.}
   \item{minstat}{Minimum value of the statistic for selecting species in the summary.}
-  \item{indvalcomp}{Flag used to report components "A" (or "A.g") and "B" of indicator values. This argument is effective only if "multipatt" function was executed using \code{func = "IndVal"} or \code{func = "IndVal.g"}.}
+  \item{At}{Minimum value of positive predictive value (A) for selecting indicators. This argument is effective only if \code{multipatt} function was executed using \code{func = "IndVal"} or \code{func = "IndVal.g"}.}
+  \item{Bt}{Minimum value for sensitivity (B) for selecting indicators. This argument is effective only if \code{multipatt} function was executed using \code{func = "IndVal"} or \code{func = "IndVal.g"}.}
+  \item{indvalcomp}{Flag used to report components "A" (or "A.g") and "B" of indicator values. This argument is effective only if \code{multipatt} function was executed using \code{func = "IndVal"} or \code{func = "IndVal.g"}.}
   \item{...}{Additional arguments of the \code{summary} function.}
 }
 \details{

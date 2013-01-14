@@ -8,6 +8,7 @@ vector.to.partition <- function(v, clnames) {
 }                                                                                                                                          
 	
   nsps = ncol(X)
+  spnames = names(X)
   nsites = nrow(X)
   nperm = control$nperm
   
@@ -67,7 +68,7 @@ vector.to.partition <- function(v, clnames) {
 		cdm=pmin(matrix(1,nrow=nsps,ncol=ngroups),(2*pmin(cdm,ddm))/(nperm+1))
 	}
 	cdm = as.data.frame(cdm)
-	row.names(cdm)=names(X)
+	row.names(cdm)=spnames
    names(cdm)=names(as.data.frame(U))
 	})
   a[3] <- sprintf("%2f",a[3])

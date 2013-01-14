@@ -1,29 +1,31 @@
 #Finds the combination of clusters which is most significantly associated to each of the species patterns
-multipatt <- function (x, cluster, func = "IndVal.g", duleg = FALSE, restcomb=NULL, control = permControl(), print.perm = FALSE)                                                                                              
+multipatt <- function (x, cluster, func = "IndVal.g", duleg = FALSE, restcomb=NULL, max.order=NULL, control = permControl(), print.perm = FALSE)                                                                                              
 {
 	                                                                                                                              
 
 # Matrix of possible cluster combinations
-cl.comb <- function(clnames) {
+cl.comb <- function(clnames, max.order) {
 	  k <- length(clnames)
     ep <- diag(1,k,k)
     names.ep <- clnames
-    for(j in 2:k) {
-      nco <- choose(k,j)
-      co <- combn(k,j)
-      epn <- matrix(0,ncol=nco,nrow=k)
-      for(i in 1:ncol(co)) {
-	  epn[co[,i],i] <- 1
-	  names.ep <- c(names.ep, paste(clnames[co[,i]], collapse = "+"))
+    if(max.order>1) {
+      for(j in 2:min(max.order, k)) {
+        nco <- choose(k,j)
+        co <- combn(k,j)
+        epn <- matrix(0,ncol=nco,nrow=k)
+        for(i in 1:ncol(co)) {
+          epn[co[,i],i] <- 1
+          names.ep <- c(names.ep, paste(clnames[co[,i]], collapse = "+"))
+        }
+        ep <- cbind(ep,epn)
       }
-      ep <- cbind(ep,epn)
     }
     colnames(ep) <- names.ep
     return(ep)
 }
 
 # Correlation measures for combinations
-rcomb <- function(x, comb, k, mode="group", duleg=FALSE, restcomb=NULL) {
+rcomb <- function(x, comb, k, max.order, mode="group", restcomb=NULL) {
       nsps = ncol(x)
       N = dim(comb)[1]	
       ni = diag(t(comb) %*% comb)[1:k]
@@ -43,9 +45,9 @@ rcomb <- function(x, comb, k, mode="group", duleg=FALSE, restcomb=NULL) {
       lspK = (N/k) * rowSums(lispni)
       aspK = (N/k) * rowSums(aispni)
 
-      if(duleg) {
-	  aspC = (N/k)*aispni
-	  nC = rep(N/k,k)
+      if(max.order==1) {
+	       aspC = (N/k)*aispni
+	       nC = rep(N/k,k)
       } else {
 	  #Corrected sum of species values in combinations
 	  aspC = matrix(0,nrow=nsps,ncol=ncol(comb))
@@ -56,7 +58,7 @@ rcomb <- function(x, comb, k, mode="group", duleg=FALSE, restcomb=NULL) {
 	  nC[1:k] = 1
 	  #Remaining levels
 	  cnt = k+1	   
-	  for(level in 2:k) {
+	  for(level in 2:max.order) {
 	    co = combn(1:k,level)
 	    for(j in 1:ncol(co)) {
 		aspC[,cnt] = rowSums(aispni[,co[,j]])
@@ -73,38 +75,37 @@ rcomb <- function(x, comb, k, mode="group", duleg=FALSE, restcomb=NULL) {
   num = N*aspC - aspK%o%nC
   den = sqrt(((N*lspK)-aspK^2)%o%(N*nC-(nC^2)))
   str=num/den
-  if(!duleg) str <- str[,-ncol(str)] # remove all sites as combination for correlation indices
-  if(!duleg && !is.null(restcomb)) {
+  colnames(str) <- colnames(comb)[1:ncol(str)]
+  #Remove site group combinations that are not to be compared
+  if(!is.null(restcomb)) {
     if(sum(restcomb %in% (1:ncol(str)))!=length(restcomb)) 
       stop(paste("One or more indices in 'restcomb' are out of range [1, ",ncol(str),"]",sep=""))      
     str <- str[,restcomb]
   }
-#  colnames(str) <- colnames(comb)[1:ncol(str)]
   return(str)
 }
 
 # IndVal for combinations
-indvalcomb <- function(x, comb, k, mode = "group", duleg = FALSE, restcomb=NULL, indvalcomp=FALSE) {
+indvalcomb <- function(x, comb, k, max.order, mode = "group", restcomb=NULL, indvalcomp=FALSE) {
   tx <- t(x)
   aisp = tx %*% comb
   dx <- dim(tx)
   nisp <- matrix(as.logical(tx),nrow=dx[1],ncol=dx[2]) %*% comb
-#    nisp = t(ifelse(x > 0, 1, 0)) %*% comb
   ni = diag(t(comb) %*% comb)
   nispni = sweep(nisp, 2, ni, "/")   
   if (mode == "site") A = sweep(aisp, 1, colSums(x), "/")  
   else {
     aispni = sweep(aisp[, 1:k], 2, ni[1:k], "/")
     asp = rowSums(aispni[, 1:k])
-    if(duleg) A = sweep(aispni, 1, asp, "/") 
+    if(max.order==1) A = sweep(aispni, 1, asp, "/")
     else {
-    s = aispni #matrix(0, nrow = nrow(aispni), ncol = ncol(comb))
-    for(j in 2:(k)) {
-      co <- combn(k,j)
-      sn <- apply(co, 2, function(x) rowSums(aispni[,x]))
-      s <- cbind(s, sn)
-    }
-	  A = sweep(s, 1, asp, "/")
+      s = aispni 
+      for(j in 2:max.order) {
+        co <- combn(k,j)
+        sn <- apply(co, 2, function(x) rowSums(aispni[,x]))
+        s <- cbind(s, sn)
+      }
+	    A = sweep(s, 1, asp, "/")
   	} 
   }
   iv = sqrt(A * nispni)
@@ -113,7 +114,9 @@ indvalcomb <- function(x, comb, k, mode = "group", duleg = FALSE, restcomb=NULL,
   colnames(nispni) <- colnames(comb)
   rownames(A) <- rownames(iv)
   rownames(nispni) <- rownames(iv)
-  if(!duleg && !is.null(restcomb)) {
+
+  #Remove site group combinations that are not to be compared
+  if(!is.null(restcomb)) {
     if(sum(restcomb %in% (1:ncol(iv)))!=length(restcomb)) 
       stop(paste("One or more indices in 'restcomb' are out of range [1, ",ncol(iv),"]",sep=""))
     iv = iv[,restcomb]
@@ -124,7 +127,8 @@ indvalcomb <- function(x, comb, k, mode = "group", duleg = FALSE, restcomb=NULL,
   else return(list(A=A,B=nispni, iv=iv))
 }
 
-	
+
+  #function multipatt starts here	
   vegnames <- names(x)
   x <- as.matrix(x)                                                                                                                                
   nsps = ncol(x)
@@ -133,18 +137,31 @@ indvalcomb <- function(x, comb, k, mode = "group", duleg = FALSE, restcomb=NULL,
   nperm = control$nperm
 
   # Check parameters
-   func= match.arg(func, c("r","r.g","IndVal.g","IndVal"))
+  func= match.arg(func, c("r","r.g","IndVal.g","IndVal"))
   if(k<2) stop("At least two clusters are required.")
   if(sum(is.na(cluster))>0) stop("Cannot deal with NA values. Remove and run again.")
   if(sum(is.na(x))>0) stop("Cannot deal with NA values. Remove and run again.")
+  if(is.null(max.order)) {
+    if(func=="IndVal.g" || func=="IndVal") max.order=k
+    else max.order = k-1
+  } else {
+    if(!is.numeric(max.order)) stop("Parameter max.order must be an integer.")
+    if(func=="IndVal.g" || func=="IndVal") max.order = min(max(round(max.order),1),k)
+    else max.order = min(max(round(max.order),1),k-1)
+  }
   if(!is.null(restcomb)) { 
     restcomb = as.integer(restcomb)
   }
 
   # creates combinations from clusters
-  combin <- cl.comb(clnames)	# possible combinations (can also be used for permutations)
-  if (duleg) combin <- combin[,1:k]
-  
+  if(duleg) max.order = 1 #duleg = TRUE overrides max.order
+
+  # possible combinations (can also be used for permutations)
+  combin <- cl.comb(clnames, max.order)	
+
+  # discard combinations to discard that cannot be calculated because of order limitation
+  restcomb = restcomb[restcomb<=ncol(combin)] 
+
   #Builds the plot membership matrix corresponding to combinations
   clind = apply(sapply(clnames,"==",cluster),1,which)
   comb <- combin[clind,]
@@ -152,16 +169,16 @@ indvalcomb <- function(x, comb, k, mode = "group", duleg = FALSE, restcomb=NULL,
   # Computes association strength for each group
   A = NULL
   B = NULL
-  if(func=="r") str = rcomb(x, comb, k, mode = "site", duleg = duleg, restcomb = restcomb)
-  else if(func=="r.g") str = rcomb(x, comb, k, mode = "group", duleg = duleg, restcomb = restcomb)
+  if(func=="r") str = rcomb(x, comb, k, max.order, mode = "site", restcomb = restcomb)
+  else if(func=="r.g") str = rcomb(x, comb, k, max.order, mode = "group", restcomb = restcomb)
   else if(func=="IndVal") {
-  	  IndVal = 	indvalcomb(x, comb, k, mode = "site", duleg, restcomb = restcomb, indvalcomp=TRUE)
+  	  IndVal = 	indvalcomb(x, comb, k, max.order, mode = "site", restcomb = restcomb, indvalcomp=TRUE)
   	  str = IndVal$iv
   	  A = IndVal$A
   	  B = IndVal$B
   	}
   else if(func=="IndVal.g") {
-  	  IndVal = 	indvalcomb(x, comb, k, mode = "group", duleg, restcomb = restcomb, indvalcomp=TRUE)
+  	  IndVal = 	indvalcomb(x, comb, k, max.order, mode = "group", restcomb = restcomb, indvalcomp=TRUE)
   	  str = IndVal$iv
   	  A = IndVal$A
   	  B = IndVal$B
@@ -171,7 +188,7 @@ indvalcomb <- function(x, comb, k, mode = "group", duleg = FALSE, restcomb=NULL,
   maxstr = apply(str,1,max) 
   wmax <- max.col(str)
   #prepares matrix of results
-  if(!duleg && !is.null(restcomb))  m <- as.data.frame(t(combin[,restcomb][,wmax]))
+  if(!is.null(restcomb))  m <- as.data.frame(t(combin[,restcomb][,wmax]))
   else  m <- as.data.frame(t(combin[,wmax]))
   dimnames(m) <- list(vegnames, sapply(clnames, function(x) paste("s", x, sep='.')))
   m$index <- wmax
@@ -184,10 +201,10 @@ indvalcomb <- function(x, comb, k, mode = "group", duleg = FALSE, restcomb=NULL,
       tmpclind = clind[pInd]
 	  combp = combin[tmpclind,]
       tmpstr <- switch(func,
-	r   = rcomb(x, combp, k, mode = "site", duleg = duleg, restcomb = restcomb),
-	r.g = rcomb(x, combp, k, mode = "group", duleg = duleg, restcomb = restcomb),
-	IndVal = indvalcomb(x, combp, k, mode = "site", duleg, restcomb = restcomb),
-	IndVal.g= indvalcomb(x, combp, k, mode = "group", duleg, restcomb = restcomb)
+	r   = rcomb(x, combp, k, max.order, mode = "site", restcomb = restcomb),
+	r.g = rcomb(x, combp, k, max.order, mode = "group", restcomb = restcomb),
+	IndVal = indvalcomb(x, combp, k, max.order, mode = "site", restcomb = restcomb),
+	IndVal.g= indvalcomb(x, combp, k, max.order, mode = "group", restcomb = restcomb)
       )
       tmpmaxstr <- vector(length=nrow(tmpstr))
       for(i in 1:nrow(tmpstr)) tmpmaxstr[i] <- max(tmpstr[i,])	# apply is more slowly in this case
@@ -198,7 +215,7 @@ indvalcomb <- function(x, comb, k, mode = "group", duleg = FALSE, restcomb=NULL,
   #Put NA for the p-value of species whose maximum associated combination is the set of all combinations
   m$p.value[m$index == (2^k-1)] <- NA
 
-  if(!duleg && !is.null(restcomb))  comb<-comb[,restcomb]
+  if(!is.null(restcomb))  comb<-comb[,restcomb]
   
   a = list(call=match.call(), func = func, cluster = cluster, comb = comb, str = str, A=A, B=B, sign = m)
   class(a) = "multipatt"

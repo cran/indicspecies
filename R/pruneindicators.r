@@ -38,13 +38,13 @@ nonnested <- function (x, selection=NULL, verbose=FALSE) {
     	if(verbose) cat(paste("No indicator is valid using the given thresholds."))
     	return()
     }
-	validCoverage<-coverage(x, selection)
+	validCoverage<-coverage(x, selection=selection)
 	if(verbose) cat(paste("Coverage of valid set of ",sum(selection)," indicators: ", round(validCoverage*100, digits=1),"%\n", sep=""))
 	
 	if(sum(selection)>1) {
 	    NN <-nonnested(x, selection=selection, verbose=FALSE)
 		selection <- row.names(x$C) %in% NN
-		nnCoverage<-coverage(x, selection)
+		nnCoverage<-coverage(x, selection=selection)
 		if(verbose) cat(paste("Coverage of valid set of ",sum(selection)," nonnested indicators: ", round(nnCoverage*100, digits=1),"%\n", sep=""))
 	
 	
@@ -71,7 +71,7 @@ nonnested <- function (x, selection=NULL, verbose=FALSE) {
 	      		selmod = selection
 	      		selmod[selection]=FALSE
 	      		selmod[selection][co[,coi]]=TRUE
-	      		coicov = coverage(x, selmod)
+	      		coicov = coverage(x, selection=selmod)
 	      		if(coicov>maxcov) {
 	      		   bestAtPoint= coi
 	      		   maxcov = coicov
@@ -83,7 +83,7 @@ nonnested <- function (x, selection=NULL, verbose=FALSE) {
 	      		best = which(keep2)[1]
 	      		selmodFinal[selection]=FALSE
 	      		selmodFinal[selection][co[,best]]=TRUE
-	      		finalCoverage<-coverage(x, selmodFinal)
+	      		finalCoverage<-coverage(x, selection=selmodFinal)
 				if(verbose) cat(paste("Coverage of final set of ", j, " indicators: ",round(finalCoverage*100,digits=1),"%\n", sep=""))
 	      		continue = FALSE
 	      	} else {

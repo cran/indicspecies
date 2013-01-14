@@ -37,7 +37,7 @@ indicators(X, cluster, group, func="IndVal", max.order=5, At=0, Bt=0, sqrtIVt=0,
   \item{...}{Additional arguments for functions \code{print} or \code{plot}.}
 }
 \details{
-   Function \code{indicators} creates explores the indicator value of the simultaneous occurrence of sets of species (i.e. species combinations). The maximum number of species conforming the species combination can be controlled using \code{max.order}. For each combination of species it determines its positive predictive value (A), sensitivity (B) and the square root of indicator value (sqrtIV). If \code{nboot>0} then bootstrap confidence intervals are determined with the specified \code{alpha} level. The combinations to be kept can be restricted to those whose positive predictive value, sensitivity and/or indicator value are equal or greater than input thresholds. Function \code{print} allows printing the results in a nice table, whereas \code{plot} draws the statistics against the order (i.e. the number of species) of the combination.
+   Function \code{indicators} creates explores the indicator value of the simultaneous occurrence of sets of species (i.e. species combinations). The method is described in De \enc{Cáceres}{Caceres} et al. (2012) and is a generalization of the Indicator Value method of \enc{Dufrêne}{Dufrene} & Legendre (1997). The maximum number of species conforming the species combination can be controlled using \code{max.order}. For each combination of species it determines its positive predictive value (A), sensitivity (B) and the square root of indicator value (sqrtIV). If \code{nboot>0} then bootstrap confidence intervals are determined with the specified \code{alpha} level, as explained in De \enc{Cáceres}{Caceres} & Legendre (2009). The combinations to be kept can be restricted to those whose positive predictive value, sensitivity and/or indicator value are equal or greater than input thresholds. Function \code{print} allows printing the results in a nice table, whereas \code{plot} draws the statistics against the order (i.e. the number of species) of the combination.
 }
 \value{
   An object of class \code{indicators} with:
@@ -49,7 +49,7 @@ indicators(X, cluster, group, func="IndVal", max.order=5, At=0, Bt=0, sqrtIVt=0,
   \item{group.vec}{A logical vector indicating the membership to the target group.}
 }
 \references{
-De \enc{Cáceres}{Caceres}, M., Legendre, P., Wiser, S.K. & Brotons, L (in preparation). Using species combinations in indicator analyses.
+De \enc{Cáceres}{Caceres}, M., Legendre, P., Wiser, S.K. and Brotons, L. 2012. Using species combinations in indicator analyses. Methods in Ecology and Evolution 3(6): 973-982.
 
 De \enc{Cáceres}{Caceres}, M. and Legendre, P. 2009. Associations between species and groups of sites: indices and statistical inference. Ecology 90(12): 3566-3574.
 

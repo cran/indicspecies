@@ -43,5 +43,5 @@ wetkm = kmeans(wetland, centers=3)## Create three clusters using
 
 strassoc(wetland, wetkm$cluster, func="IndVal.g") ## Compute Dufrene and Legendre's IndVal
 
-strassoc(wetland, wetkm$cluster, func="r", nboot =1000) ## Compute point-biserial correlation, with bootstrap 95 percent confidence intervals
+strassoc(wetland, wetkm$cluster, func="r", nboot =100) ## Compute point-biserial correlation, with bootstrap 95 percent confidence intervals
 }
