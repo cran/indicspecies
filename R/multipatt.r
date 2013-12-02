@@ -1,5 +1,5 @@
 #Finds the combination of clusters which is most significantly associated to each of the species patterns
-multipatt <- function (x, cluster, func = "IndVal.g", duleg = FALSE, restcomb=NULL, min.order=1, max.order=NULL, control = permControl(), print.perm = FALSE)                                                                                              
+multipatt <- function (x, cluster, func = "IndVal.g", duleg = FALSE, restcomb=NULL, min.order=1, max.order=NULL, control = how(), print.perm = FALSE)                                                                                              
 {
 	                                                                                                                              
 

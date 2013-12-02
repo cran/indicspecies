@@ -6,7 +6,7 @@
 %\VignetteIndexEntry{Learning how to use the indicspecies package}
 %\VignettePackage{indicspecies}
 
-\title{How to use the \texttt{indicspecies} package (ver. 1.6.7)}
+\title{How to use the \texttt{indicspecies} package (ver. 1.7.1)}
 \author[1]{Miquel De Cáceres}
 \affil[1]{Centre Tecnològic Forestal de Catalunya. Ctra. St. Llorenç de Morunys km 2, 25280, Solsona, Catalonia, Spain}
 
@@ -58,9 +58,9 @@ When the aim is to determine which species can be used as indicators of certain 
 Indicator species analysis (with site group combinations) can be run using:
 <<>>=
 indval = multipatt(wetland, groups, 
-                   control = permControl(nperm=999)) 
+                   control = how(nperm=999)) 
 @
-As mentioned before, by default \texttt{multipatt} uses the IndVal index (\texttt{func = "IndVal.g"}) as test statistic. Actually, the square root of IndVal is returned by the \texttt{multipatt} function. The option \texttt{control = permControl(nperm=999)} allows choosing the number of random permutations required for the permutational test (this number affects the precision of the p-value). Function \texttt{permControl} from the \texttt{permute} package allows defining more complex permutational designs. 
+As mentioned before, by default \texttt{multipatt} uses the IndVal index (\texttt{func = "IndVal.g"}) as test statistic. Actually, the square root of IndVal is returned by the \texttt{multipatt} function. The option \texttt{control = how(nperm=999)} allows choosing the number of random permutations required for the permutational test (this number affects the precision of the p-value). Function \texttt{how} from the \texttt{permute} package allows defining more complex permutational designs. 
 
 \subsubsection{Displaying the results}
 When the indicator species analysis is completed, we can obtain the list of indicator species for each site group (or site group combination) using:
@@ -95,14 +95,14 @@ Several other indices can be used to analyze the association between a species a
 <<>>=
 wetlandpa = as.data.frame(ifelse(wetland>0,1,0))
 phi = multipatt(wetlandpa, groups, func = "r", 
-                control = permControl(nperm=999)) 
+                control = how(nperm=999)) 
 @
 What would be the association index if we had used abundance values instead of presence and absences (i.e. \texttt{wetland} instead of \texttt{wetlandpa})? The abundance-based counterpart of the phi coefficient is called the \emph{point biserial correlation coefficient}.
 
 It is a good practice to correct the phi coefficient for the fact that some groups have more sites than others \citep{Tichy2006}. To do that, we need to use \texttt{func = "r.g"} instead of \texttt{func = "r"}: 
 <<>>=
 phi = multipatt(wetlandpa, groups, func = "r.g", 
-                control = permControl(nperm=999)) 
+                control = how(nperm=999)) 
 @
 
 Remember that the default association index of \texttt{multipatt} is \texttt{func = "IndVal.g"}, which also includes \texttt{".g"}. In fact, the Indicator Value index defined by \citet{Dufrene1997} already incorporated a correction for unequal group sizes. It is possible to avoid this correction by calling \texttt{multipatt} with \texttt{func = "IndVal"}. However, in general we recommend using either \texttt{func = "IndVal.g"} or \texttt{func = "r.g"} for indicator species analysis.
@@ -131,7 +131,7 @@ When conducting indicator species analysis, it may happen that some combinations
 The original Indicator Value method of \citet{Dufrene1997} did not consider combinations of site groups. In other words, the only site group combinations permitted in the original method were singletons. When using \texttt{multipatt} it is possible to avoid considering site group combinations, as in the original method, by using \texttt{duleg = TRUE}:
 <<>>=
 indvalori = multipatt(wetland, groups, duleg = TRUE, 
-                      control = permControl(nperm=999)) 
+                      control = how(nperm=999)) 
 summary(indvalori)
 @
 
@@ -139,7 +139,7 @@ summary(indvalori)
 The second way to exclude site group combinations from a \texttt{multipatt} analysis is to indicate the maximum order of the combination to be considered. Using the option \texttt{max.order} we can restrict site group combinations to be, for example, singletons (\texttt{max.order = 1}, which is equal to \texttt{duleg=TRUE}), singletons and pairs (\texttt{max.order = 2}), or singletons, pairs and triplets (\texttt{max.order = 3}). In the follow example, only singletons and pairs are considered: 
 <<>>=
 indvalrest = multipatt(wetland, groups, max.order = 2, 
-                       control = permControl(nperm=999)) 
+                       control = how(nperm=999)) 
 summary(indvalrest)
 @
 In this case the output looks like a the output of an unrestricted \texttt{multipatt} execution, because the only combination that is excluded is the set of all sites, which cannot be tested for significance and thus never appears in the summary. 
@@ -150,7 +150,7 @@ There is a third, more flexible, way of restricting site group combinations. The
 The numbers composing the vector passed to \texttt{restcomb} indicate the site groups and site group combinations that we want \texttt{multipatt} to considered as valid options. For example, if we do not want to consider the combination of Group 1 and Group 2, we will exclude combination \texttt{4} from vector \texttt{restcomb}:
 <<>>=
 indvalrest = multipatt(wetland, groups, restcomb = c(1,2,3,5,6), 
-                       control = permControl(nperm=999)) 
+                       control = how(nperm=999)) 
 summary(indvalrest)
 @
 If we compare these last results with those including all possible site group combinations, we will realize that species `Elesp.' was formerly an indicator of Group 1 and Group 2, and now it does not appear in the list of indicator species. If fact, if we examine the results more closely we see that the highest IndVal for `Elesp' is achieved for group 1, but this relationship is not significant:
@@ -180,7 +180,7 @@ As we explained before, \texttt{multipatt} statistically tests the association b
 
 <<>>=
 prefsign = signassoc(wetland, cluster=groups,  alternative = "two.sided", 
-                     control = permControl(nperm=199)) 
+                     control = how(nperm=199)) 
 head(prefsign)
 @
 The last columns of the results indicate the group for which the p-value was the lowest, and the p-value corrected for multiple testing using the Sidak method.
@@ -229,7 +229,7 @@ dim(wetcomb)
 The resulting data frame has the same number of sites (i.e. \Sexpr{nrow(wetcomb)}) but as many columns as species combinations (in this case \Sexpr{ncol(wetcomb)} columns). Each element of the data frame contains an abundance value, which is the minimum abundance value among all the species forming the combination, for the corresponding site. In our example, we used \texttt{max.order = 2} to limit the order of combinations. Therefore, only pairs of species were considered. Once we have this new data set, we can use it in \texttt{multipatt}:
 <<>>=
 indvalspcomb = multipatt(wetcomb, groups, duleg = TRUE, 
-                       control = permControl(nperm=999))
+                       control = how(nperm=999))
 summary(indvalspcomb, indvalcomp = TRUE)
 @
 The best indicators for both Group 1 and Group 3 are individual species (`Ludads' and `Pancam'). However, Group 2 is best indicated if we find, in the same community, `Phynod' and `Elesp'. Note that the species forming the indicator combination do not need to be good single-species indicators themselves. In our example `Phynod' is a good indicator of Group 2 but `Elesp.' is not.

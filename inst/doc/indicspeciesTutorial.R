@@ -38,7 +38,7 @@ groupskm
 ### code chunk number 6: indicspeciesTutorial.Rnw:59-61
 ###################################################
 indval = multipatt(wetland, groups, 
-                   control = permControl(nperm=999)) 
+                   control = how(nperm=999)) 
 
 
 ###################################################
@@ -70,14 +70,14 @@ indval$sign
 ###################################################
 wetlandpa = as.data.frame(ifelse(wetland>0,1,0))
 phi = multipatt(wetlandpa, groups, func = "r", 
-                control = permControl(nperm=999)) 
+                control = how(nperm=999)) 
 
 
 ###################################################
 ### code chunk number 12: indicspeciesTutorial.Rnw:103-105
 ###################################################
 phi = multipatt(wetlandpa, groups, func = "r.g", 
-                control = permControl(nperm=999)) 
+                control = how(nperm=999)) 
 
 
 ###################################################
@@ -102,7 +102,7 @@ round(head(indval$str),3)
 ### code chunk number 16: indicspeciesTutorial.Rnw:132-135
 ###################################################
 indvalori = multipatt(wetland, groups, duleg = TRUE, 
-                      control = permControl(nperm=999)) 
+                      control = how(nperm=999)) 
 summary(indvalori)
 
 
@@ -110,7 +110,7 @@ summary(indvalori)
 ### code chunk number 17: indicspeciesTutorial.Rnw:140-143
 ###################################################
 indvalrest = multipatt(wetland, groups, max.order = 2, 
-                       control = permControl(nperm=999)) 
+                       control = how(nperm=999)) 
 summary(indvalrest)
 
 
@@ -118,7 +118,7 @@ summary(indvalrest)
 ### code chunk number 18: indicspeciesTutorial.Rnw:151-154
 ###################################################
 indvalrest = multipatt(wetland, groups, restcomb = c(1,2,3,5,6), 
-                       control = permControl(nperm=999)) 
+                       control = how(nperm=999)) 
 summary(indvalrest)
 
 
@@ -147,7 +147,7 @@ round(head(prefstat$upperCI),3)
 ### code chunk number 22: indicspeciesTutorial.Rnw:181-184
 ###################################################
 prefsign = signassoc(wetland, cluster=groups,  alternative = "two.sided", 
-                     control = permControl(nperm=199)) 
+                     control = how(nperm=199)) 
 head(prefsign)
 
 
@@ -185,7 +185,7 @@ dim(wetcomb)
 ### code chunk number 27: indicspeciesTutorial.Rnw:230-233
 ###################################################
 indvalspcomb = multipatt(wetcomb, groups, duleg = TRUE, 
-                       control = permControl(nperm=999))
+                       control = how(nperm=999))
 summary(indvalspcomb, indvalcomp = TRUE)
 
 

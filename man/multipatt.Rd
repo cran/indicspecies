@@ -9,7 +9,7 @@
 }
 \usage{
 multipatt(x, cluster, func = "IndVal.g", duleg=FALSE, restcomb=NULL, 
-         min.order = 1, max.order = NULL, control=permControl(), 
+         min.order = 1, max.order = NULL, control=how(), 
          print.perm=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -21,11 +21,11 @@ multipatt(x, cluster, func = "IndVal.g", duleg=FALSE, restcomb=NULL,
   \item{restcomb}{A vector of integer values used to restrict the combinations of site groups to those with ecological sense according to the analyst. The default \code{NULL} indicates that all combinations are used. If \code{duleg=TRUE} this argument is ignored.} 
   \item{min.order}{An integer indicating the minimum order of site group combinations (by default \code{max.order=1} for singletons). Cannot be larger than \code{max.order}.}
   \item{max.order}{An integer indicating the maximum order of site group combinations to be considered: \code{max.order=1} for singletons, \code{max.order=2} for pairs, \code{max.order=3} for triplets... As \code{restcomb}, this parameter provide a way to restrict the site group combinations that make ecological sense. By default all possible site group combinations are considered. If \code{max.order=1} then the function will behave as if \code{duleg=TRUE}.}
-  \item{control}{a list of control values describing properties of the permutation design, as returned by a call to \code{\link{permControl}}.}
+  \item{control}{a list of control values describing properties of the permutation design, as returned by a call to \code{\link{how}}.}
   \item{print.perm}{If TRUE, prints permutation numbers after each set of 100 permutations.}
 }
 \details{
-   This function creates combinations of the input clusters and compares each combination with the species in the input matrix x. For each species it chooses the combination with a highest association value. Best matching patterns are tested for statistical significance of the associations. Four association indices are possible (some less than for \code{\link{strassoc}}): "IndVal", "IndVal.g", "r" and "r.g". Indicator value indices will return the pattern that better matches the species observed pattern, whereas correlation indices will return the pattern that creates a highest inside/outside difference. Details are given in De \enc{Cáceres}{Caceres} et al. (2010). The user can restrict the combinations in three ways: (1) by using \code{duleg=TRUE}, which leads to consider single site-groups only; (2) by setting the minimum and maximum order of combinations using \code{min.order} and \code{max.order}; or (3) by using \code{restcomb} to restrict combinations at will. In order to carry out the third way, values in \code{restcomb} must be the indices of combinations that appear in the column \code{index} of object \code{sign} (see below). Complex permutation designs are allowed through the function \code{\link{permControl}} from package "permute".
+   This function creates combinations of the input clusters and compares each combination with the species in the input matrix x. For each species it chooses the combination with a highest association value. Best matching patterns are tested for statistical significance of the associations. Four association indices are possible (some less than for \code{\link{strassoc}}): "IndVal", "IndVal.g", "r" and "r.g". Indicator value indices will return the pattern that better matches the species observed pattern, whereas correlation indices will return the pattern that creates a highest inside/outside difference. Details are given in De \enc{Cáceres}{Caceres} et al. (2010). The user can restrict the combinations in three ways: (1) by using \code{duleg=TRUE}, which leads to consider single site-groups only; (2) by setting the minimum and maximum order of combinations using \code{min.order} and \code{max.order}; or (3) by using \code{restcomb} to restrict combinations at will. In order to carry out the third way, values in \code{restcomb} must be the indices of combinations that appear in the column \code{index} of object \code{sign} (see below). Complex permutation designs are allowed through the function \code{\link{how}} from package "permute".
 }
 \value{
   An object of class \code{multipatt} with:
@@ -51,7 +51,7 @@ Miquel De \enc{Cáceres}{Caceres} Ainsa, Biodiversity and Landscape Ecology Labo
 
 Florian Jansen, Institute of Botany and Landscape Ecology, Ernst-Moritz-Arndt-University
 }
-\seealso{\code{\link{summary.multipatt}}, \code{\link{strassoc}}, \code{\link{signassoc}}, \code{\link{permControl}}}
+\seealso{\code{\link{summary.multipatt}}, \code{\link{strassoc}}, \code{\link{signassoc}}, \code{\link{how}}}
 \examples{
 library(stats)
 
@@ -60,7 +60,7 @@ data(wetland) ## Loads species data
 wetkm = kmeans(wetland, centers=3) ## Creates three clusters using kmeans
 
 ## Runs the combination analysis using IndVal.g as statistic
-wetpt = multipatt(wetland, wetkm$cluster, control = permControl(nperm=999)) 
+wetpt = multipatt(wetland, wetkm$cluster, control = how(nperm=999)) 
 
 ## Lists those species with significant association to one combination
 summary(wetpt) 

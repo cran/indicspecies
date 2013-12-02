@@ -1,5 +1,5 @@
 `signassoc` <-
-function(X, U=NULL, cluster=NULL, mode = 1, alternative="greater", control = permControl(), print.perm=FALSE) {
+function(X, U=NULL, cluster=NULL, mode = 1, alternative="greater", control = how(), print.perm=FALSE) {
 	
 vector.to.partition <- function(v, clnames) {
     m <- t(sapply(v,function(x) as.numeric(x==clnames)))

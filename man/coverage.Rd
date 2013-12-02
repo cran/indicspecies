@@ -68,7 +68,7 @@ plotcoverage(sc)
 plotcoverage(sc, max.order=2, add=TRUE, lty=2)
 
 ## Runs the combination analysis using IndVal.g as statistic
-wetpt = multipatt(wetland, wetkm$cluster, control = permControl(nperm=999)) 
+wetpt = multipatt(wetland, wetkm$cluster, control = how(nperm=999)) 
 ## Determines the coverage for each site group combination
 coverage(wetland, wetpt)
 }
