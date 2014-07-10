@@ -42,7 +42,7 @@ nonnested <- function (x, selection=NULL, verbose=FALSE) {
 	if(verbose) cat(paste("Coverage of valid set of ",sum(selection)," indicators: ", round(validCoverage*100, digits=1),"%\n", sep=""))
 	
 	if(sum(selection)>1) {
-	    NN <-nonnested(x, selection=selection, verbose=FALSE)
+	  NN <-nonnested(x, selection=selection, verbose=FALSE)
 		selection <- row.names(x$C) %in% NN
 		nnCoverage<-coverage(x, selection=selection)
 		if(verbose) cat(paste("Coverage of valid set of ",sum(selection)," nonnested indicators: ", round(nnCoverage*100, digits=1),"%\n", sep=""))
@@ -59,7 +59,7 @@ nonnested <- function (x, selection=NULL, verbose=FALSE) {
 		indnames<-row.names(c)
 		k <- length(indnames)
 		j=1
-		continue = TRUE
+		continue = (!is.null(max.indicators))
     	selmodFinal = selection
    		while(continue) {
       		co <- combn(k,j) #Generate subsets of indicators

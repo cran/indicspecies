@@ -16,7 +16,7 @@ pruneindicators(x, At=0, Bt=0, sqrtIVt=0, max.indicators=4, verbose=FALSE)
   \item{At}{Threshold for positive predictive value. Combinations with lower values are not kept.}
   \item{Bt}{Threshold for sensitivity. Combinations with lower values are not kept.}
   \item{sqrtIVt}{Threshold for (square root of) indicator value. Combinations with lower values are not kept.}
-  \item{max.indicators}{Maximum number of species combinations to be kept.}
+  \item{max.indicators}{Maximum number of species combinations to be kept. If \code{NULL}, the function returns all the non-nested valid indicators without further selection.}
   \item{verbose}{If TRUE, prints the results of each step.}
 }
 \details{
