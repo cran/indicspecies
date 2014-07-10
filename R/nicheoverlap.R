@@ -1,5 +1,5 @@
-nicheoverlap <- function (P1, P2 = NULL, D = NULL, q = NULL, mode = "multiple", Np1 = NULL, 
-            Np2 = NULL, Nq = NULL, nboot = 1000, alpha = 0.05) {
+nicheoverlap <- function (P1, P2 = NULL, D = NULL, q1 = NULL, q2 = NULL, mode = "multiple", Np1 = NULL, 
+            Np2 = NULL, Nq1 = NULL, Nq2 = NULL, nboot = 1000, alpha = 0.05) {
   MODES <- c("single", "multiple", "pairwise")
   mode <- match.arg(mode, MODES)
   if(mode =="multiple" || mode =="single") {
@@ -11,6 +11,12 @@ nicheoverlap <- function (P1, P2 = NULL, D = NULL, q = NULL, mode = "multiple", 
       if (!inherits(Np1, "numeric") || !inherits(Np2, "numeric")) stop("Np1 and Np2 should be numeric vectors")
       Np1 = as.integer(Np1)
       Np2 = as.integer(Np2)
+    }
+    if((!is.null(Nq1) && is.null(Nq2)) || (is.null(Nq1) && !is.null(Nq2))) stop("Nq1 and Nq2 should be both either NULL or contain numeric values")
+    if (!is.null(Nq1) && !is.null(Nq2)) {
+      if (!inherits(Nq1, "numeric") || !inherits(Nq2, "numeric")) stop("Nq1 and Nq2 should be numeric")
+      Nq1 = as.integer(Nq1)
+      Nq2 = as.integer(Nq2)
     }
     if (!is.null(D)) {
       if (!inherits(D, "dist")) 
@@ -29,13 +35,21 @@ nicheoverlap <- function (P1, P2 = NULL, D = NULL, q = NULL, mode = "multiple", 
       D <- as.dist(D)
     }    
   }
-  #Check 'q' the availability of resources
-  if (!is.null(q)) {
-    if (length(q) != ncol(P1)) stop("The number of items in q must be equal to the number of columns in P1 and P2")
-    q = q/sum(q)
+  #Check 'q1' the availability of resources in the first 'season'
+  if (!is.null(q1)) {
+    if (length(q1) != ncol(P1)) stop("The number of items in q1 must be equal to the number of columns in P1 and P2")
+    q1 = q1/sum(q1)
   } else {
-    q = rep(1/ncol(P1), ncol(P1))
+    q1 = rep(1/ncol(P1), ncol(P1))
   }
+  #Check 'q2' the availability of resources in the second 'season'
+  if (!is.null(q2)) {
+    if (length(q2) != ncol(P2)) stop("The number of items in q1 must be equal to the number of columns in P1 and P2")
+    q2 = q2/sum(q2)
+  } else {
+    q2 = rep(1/ncol(P2), ncol(P2))
+  }
+  
   #If no distance matrix was supplied, generate one (equidistant resources)
   if (is.null(D)) D <- as.dist((matrix(1, ncol(P1), ncol(P1)) - diag(rep(1, ncol(P1)))))
   
@@ -73,7 +87,7 @@ nicheoverlap <- function (P1, P2 = NULL, D = NULL, q = NULL, mode = "multiple", 
     for (i in 1:nrow(P1)) {
       pi1 = as.numeric(P1[i, ])
       pi2 = as.numeric(P2[i, ])
-      O[i, 1] <- overlap1(getF(pi1, q), getF(pi2, q), D)
+      O[i, 1] <- overlap1(getF(pi1, q1), getF(pi2, q2), D)
       if (!is.null(Np1) && !is.null(Np2)) {
         BO = vector("numeric", length = nboot)
         O[i, 2] = NA
@@ -81,10 +95,13 @@ nicheoverlap <- function (P1, P2 = NULL, D = NULL, q = NULL, mode = "multiple", 
         if (!is.na(sum(pi1)) && !is.na(sum(pi2))) {
           bsamp1 = rmultinom(nboot, Np1[i], getF(pi1))
           bsamp2 = rmultinom(nboot, Np2[i], getF(pi2))
-          if (!is.null(Nq)) qsamp = rmultinom(nboot, Nq, q)
+          if (!is.null(Nq1) && !is.null(Nq2)) {
+            qsamp1 = rmultinom(nboot, Nq1, q1)
+            qsamp2 = rmultinom(nboot, Nq2, q2)
+          }
           for (b in 1:nboot) {
-            if (!is.null(Nq)) BO[b] = overlap1(getF(bsamp1[, b], qsamp[, b]), getF(bsamp2[, b], qsamp[, b]), D)
-            else BO[b] = overlap1(getF(bsamp1[, b], q), getF(bsamp2[, b], q), D)
+            if (!is.null(Nq1) && !is.null(Nq2)) BO[b] = overlap1(getF(bsamp1[, b], qsamp1[, b]), getF(bsamp2[, b], qsamp2[, b]), D)
+            else BO[b] = overlap1(getF(bsamp1[, b], q1), getF(bsamp2[, b], q2), D)
           }
           #Some NA may appear because of zeroes in qsamp
           BO = BO[!is.na(BO)]
@@ -109,14 +126,17 @@ nicheoverlap <- function (P1, P2 = NULL, D = NULL, q = NULL, mode = "multiple", 
   if (mode == "single") {
     O <- as.data.frame(matrix(NA, nrow = 1, ncol = 3))
     rownames(O) <- "Overlap"
-    O[1, 1] <- overlap1(getF(colSums(P1, na.rm=TRUE), q), getF(colSums(P2, na.rm=TRUE), q), D)
+    O[1, 1] <- overlap1(getF(colSums(P1, na.rm=TRUE), q1), getF(colSums(P2, na.rm=TRUE), q2), D)
     BO = vector("numeric", length = nboot)
-    if (!is.null(Nq)) qsamp = rmultinom(nboot, Nq, q)
+    if (!is.null(Nq1) & !is.null(Nq2)) {
+      qsamp1 = rmultinom(nboot, Nq1, q1)
+      qsamp2 = rmultinom(nboot, Nq2, q2)
+    }
     for (b in 1:nboot) {
       p1samp = colSums(P1[sample(1:nrow(P1), replace = TRUE), ], na.rm=TRUE)
       p2samp = colSums(P2[sample(1:nrow(P2), replace = TRUE), ], na.rm=TRUE)
-      if (!is.null(Nq)) BO[b] = overlap1(getF(p1samp, qsamp[, b]), getF(p2samp, qsamp[, b]), D)
-      else BO[b] = overlap1(getF(p1samp, q), getF(p2samp, q), D)
+      if (!is.null(Nq1) & !is.null(Nq2)) BO[b] = overlap1(getF(p1samp, qsamp1[, b]), getF(p2samp, qsamp2[, b]), D)
+      else BO[b] = overlap1(getF(p1samp, q1), getF(p2samp, q2), D)
     }
     BO = BO[!is.na(BO)]
     z0 = qnorm(sum(BO < O[1, 1])/length(BO))
@@ -144,17 +164,17 @@ nicheoverlap <- function (P1, P2 = NULL, D = NULL, q = NULL, mode = "multiple", 
       for (j in (i+1):nrow(P1)) {
         pi = as.numeric(P1[i, ])
         pj = as.numeric(P1[j, ])
-        O[i,j] <- overlap1(getF(pi, q), getF(pj, q), D)
+        O[i,j] <- overlap1(getF(pi, q1), getF(pj, q1), D)
         O[j,i] <- O[i,j]
         if (!is.null(Np1)) {
           BO = vector("numeric", length = nboot)
           if (!is.na(sum(pi)) && !is.na(sum(pj))) {
             bsampi = rmultinom(nboot, Np1[i], getF(pi))
             bsampj = rmultinom(nboot, Np1[j], getF(pj))
-            if (!is.null(Nq)) qsamp = rmultinom(nboot, Nq, q)
+            if (!is.null(Nq1)) qsamp1 = rmultinom(nboot, Nq1, q1)
             for (b in 1:nboot) {
-              if (!is.null(Nq)) BO[b] = overlap1(getF(bsampi[, b], qsamp[, b]), getF(bsampj[, b], qsamp[, b]), D)
-              else BO[b] = overlap1(getF(bsampi[, b], q), getF(bsampj[, b], q), D)
+              if (!is.null(Nq1)) BO[b] = overlap1(getF(bsampi[, b], qsamp1[, b]), getF(bsampj[, b], qsamp1[, b]), D)
+              else BO[b] = overlap1(getF(bsampi[, b], q1), getF(bsampj[, b], q1), D)
             }
             BO = BO[!is.na(BO)]
             z0 = qnorm(sum(BO < O[i,j])/length(BO))

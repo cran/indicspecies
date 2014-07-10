@@ -2,7 +2,7 @@ Package: indicspecies
 Type: Package
 Title: Studying the statistical relationship between species and groups
         of sites
-Version: 1.7.2
+Version: 1.7.3
 Date: 2014-07-10
 Author: Miquel De Caceres, Florian Jansen
 Maintainer: Miquel De Caceres <miquelcaceres@gmail.com>
@@ -11,7 +11,7 @@ Depends: permute
 Imports: sp, rgeos
 License: GPL (>= 2)
 LazyLoad: yes
-Packaged: 2014-07-11 07:54:55 UTC; miquelcaceres
+Packaged: 2014-09-25 17:59:44 UTC; miquelcaceres
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2014-07-11 12:14:06
+Date/Publication: 2014-09-25 23:08:11
