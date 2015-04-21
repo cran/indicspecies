@@ -1,5 +1,10 @@
 # Default NAMESPACE created by R
 # Remove the previous line if you edit this file
-import(permute,sp,rgeos)
+import(permute)
 # Export all names
 exportPattern(".")
+S3method(plot, indicators)
+S3method(predict, indicators)
+S3method(print, indicators)
+S3method(summary, multipatt)
+S3method(summary, indicators)

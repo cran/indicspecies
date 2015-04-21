@@ -205,9 +205,9 @@ It is  possible to know how the coverage changes with `A' threshold used to sele
 
 \begin{center}
 <<fig=TRUE, echo = TRUE>>=
-plotcoverage(wetland, indvalori, group="1", lty=1)
-plotcoverage(wetland, indvalori, group="2", lty=2, col="blue", add=TRUE)
-plotcoverage(wetland, indvalori, group="3", lty=3, col="red", add=TRUE)
+plotcoverage(x=wetland, y=indvalori, group="1", lty=1)
+plotcoverage(x=wetland, y=indvalori, group="2", lty=2, col="blue", add=TRUE)
+plotcoverage(x=wetland, y=indvalori, group="3", lty=3, col="red", add=TRUE)
 legend(x = 0.01, y=20, 
        legend=c("group 1","group 2", "group 3"),
        lty=c(1,2,3), col=c("black","blue","red"), bty="n")

@@ -201,7 +201,7 @@ indicators <- function (X, cluster, group, func="IndVal", max.order = 5, max.ind
   	  sIV = sqrtIVstat
   }
   
-  result = list(C=Cvalid, XC=XC, A=sA, B=sB, sqrtIV=sIV, group.vec =group.vec)
+  result = list(group.vec =group.vec, candidates = spplist, finalsplist= spplist[selSpp], C=Cvalid, XC=XC, A=sA, B=sB, sqrtIV=sIV)
   class(result) = "indicators"
   return(result)
 }

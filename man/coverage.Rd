@@ -12,7 +12,7 @@ Function \code{coverage} calculates the proportion of sites of the target site g
 coverage(x, y=NULL, selection=NULL, minstat=NULL, At=NULL, Bt=NULL, type="stat", 
 alpha=0.05) 
 plotcoverage(x, y=NULL, by=0.05, type="stat", max.order=NULL, group = NULL,  
-alpha = 0.05, add=FALSE, ...)
+alpha = 0.05, add=FALSE, xlab=expression(A[t]), ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,6 +28,7 @@ alpha = 0.05, add=FALSE, ...)
   \item{max.order}{The maximum number of species conforming species combinations (allows examining the effects of increasing the order of combinations).This parameter is only used when the function is called using objects of class '\code{indicators}'.}
   \item{group}{Either an integer or a character string indicating the site group or site group combination for which plot is desired. This parameter is only used when the function is called using objects of class '\code{multipatt}'.}
   \item{add}{Flag indicating whether the function should draw on the existing plot.}
+  \item{xlab}{Label for the x-axis.}
   \item{...}{Additional plotting parameters that are passed to the \code{plot} function.}
 }
 \details{

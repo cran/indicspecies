@@ -3,13 +3,12 @@
 \alias{nichevar}
 \alias{nichecentroid}
 \alias{nichepref}
-\alias{nichearea}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Resource niche metrics for a single niche
 }
 \description{
-Function \code{nichepref} computes the species resource preference from a the species resource use (and resource availability when given). Function \code{nichecentroid} computes the centroid on the resource space for a set of species. Function \code{nichevar} computes the multivariate resource variance for a set of species (i.e. niche breadth). Function \code{nichearea} computes the area that the the resources used by the species occupy in the resource space. In all functions resources are given in distance matrix \code{D}, the species resource use is given in \code{P} and the availability of resources, if present, are given by vector \code{q}. 
+Function \code{nichepref} computes the species resource preference from a the species resource use (and resource availability when given). Function \code{nichecentroid} computes the centroid on the resource space for a set of species. Function \code{nichevar} computes the multivariate resource variance for a set of species (i.e. niche breadth). In all functions resources are given in distance matrix \code{D}, the species resource use is given in \code{P} and the availability of resources, if present, are given by vector \code{q}. 
 }
 \usage{
 nichevar(P, D = NULL, q = NULL, mode="multiple", Np = NULL, 
@@ -18,7 +17,6 @@ nichecentroid(P, D = NULL, q = NULL, mode="multiple", Np = NULL,
 Nq = NULL, nboot = 1000, alpha=0.05)
 nichepref(P, D = NULL, q = NULL, mode="multiple", Np = NULL, 
 Nq = NULL, nboot = 1000, alpha=0.05)
-nichearea(P, D = NULL, axes=c(1,2))
 }
 \arguments{
   \item{P}{Data frame containing the relative or absolute usage that a set of species (in rows) make of a set of resources (in columns).}
@@ -29,11 +27,10 @@ nichearea(P, D = NULL, axes=c(1,2))
   \item{Nq}{The number of observations per species from which the values in \code{q} come (in \code{mode = "multiple"}).}
   \item{nboot}{Number of boostrap samples used to compute bias-corrected percentile confidence intervals.}
   \item{alpha}{Used to set the confidence level (i.e. \code{alpha = 0.05} means 95 percent confidence interval).}
-  \item{axes}{PCoA axes used for computing niche area.}
 }
 
 \details{
-The method is described in De Caceres et al. (2010). If the distance matrix is not specified (i.e. if \code{D=NULL}) the function assumes that all resources are at a maximum distance (\code{d=1}). If the resource availability vector \code{q} is given then the values in \code{P} are taken as assessments of resource use and the species preference is calculated taking into account resource availability. Otherwise resource use is equated to resource preference. Moreover, most functions can compute bootstrap confidence intervals following the bias-corrected percentile method (Manly 2007). If \code{mode = "multiple"} and \code{Np != NULL}, bootstrap samples for a given species are generated assuming a multinomial distribution with the proportions calculated from the corresponding row values in \code{P}, and the number of observations comes from the corresponding element in \code{Np}. If \code{mode = "single"} then the bootstrapped units are the rows of matrix \code{P}. In both cases, if \code{Nq} is indicated the availability of resources is also bootstrapped. The bias-corrected percentile method was described for overlap niche measures in Mueller and Altenberg (1985) and is extended here for all niche metrics except \code{nichearea}.
+The method is described in De Caceres et al. (2010). If the distance matrix is not specified (i.e. if \code{D=NULL}) the function assumes that all resources are at a maximum distance (\code{d=1}). If the resource availability vector \code{q} is given then the values in \code{P} are taken as assessments of resource use and the species preference is calculated taking into account resource availability. Otherwise resource use is equated to resource preference. Moreover, most functions can compute bootstrap confidence intervals following the bias-corrected percentile method (Manly 2007). If \code{mode = "multiple"} and \code{Np != NULL}, bootstrap samples for a given species are generated assuming a multinomial distribution with the proportions calculated from the corresponding row values in \code{P}, and the number of observations comes from the corresponding element in \code{Np}. If \code{mode = "single"} then the bootstrapped units are the rows of matrix \code{P}. In both cases, if \code{Nq} is indicated the availability of resources is also bootstrapped. The bias-corrected percentile method was described for overlap niche measures in Mueller and Altenberg (1985) and is extended here for all niche metrics.
 }
 
 \value{
@@ -63,8 +60,6 @@ data(birds)
 nichepref(birdsbreed, D = resourceD) 
 nichevar(birdsbreed, D = resourceD) 
 nichecentroid(birdsbreed, D = resourceD) 
-nichearea(birdsbreed, D = resourceD) 
-
 
 # The niche metrics using distances among resources and computes 
 # 95 percent confidence intervals
@@ -92,5 +87,27 @@ q = c(0.18, 0.24, 0.22, 0.21, 0.15), mode="multiple", Np = rowSums(birdsbreed), 
 nichecentroid(birdsbreed, D = resourceD, 
 q = c(0.18, 0.24, 0.22, 0.21, 0.15), mode="multiple",  Np = rowSums(birdsbreed), Nq = 100)
 
+# The following example defines a function to calculate the area of the niche
+# It requires package 'rgeos'
+library(rgeos)
+nichearea <- function (P, D = NULL, axes=c(1,2)) {
+    if (is.null(D)) 
+       D <- as.dist((matrix(1, ncol(P), ncol(P)) - diag(rep(1, ncol(P)))))
+    cmd = cmdscale(D,eig=TRUE,k= ncol(P)-1)
+    X = cmd$points
+    V <- data.frame(Area=rep(0, nrow(P)))
+    for (i in 1:nrow(P)) {
+    	  pi = as.numeric(P[i,])
+        if (is.na(sum(pi))) V[i, ] <- NA
+        else if (sum(pi) < 1e-16) V[i, ] <- 0
+        else if (sum(pi>0)==1) V[i,]<-0
+   	   	else {
+   	   		a =X[pi>0,axes]
+	   	   	V[i,]=area.poly(as(a[chull(a),],"gpc.poly"))
+   	   	}        	
+    }
+    return(V)
+}
+nichearea(birdsbreed, D = resourceD)
 }
 
