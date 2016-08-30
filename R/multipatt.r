@@ -141,21 +141,21 @@ indvalcomb <- function(x, memb, comb, min.order, max.order, mode = "group", rest
   nperm = control$nperm
 
   # Check parameters
-  func= match.arg(func, c("r","r.g","IndVal.g","IndVal"))
+  func= match.arg(func, c("r","r.g","IndVal.g","IndVal", "indval", "indval.g"))
   if(k<2) stop("At least two clusters are required.")
   if(sum(is.na(cluster))>0) stop("Cannot deal with NA values. Remove and run again.")
   if(sum(is.na(x))>0) stop("Cannot deal with NA values. Remove and run again.")
   if(!is.null(min.order)) {
     if(!is.numeric(min.order)) stop("Parameter min.order must be an integer.")
-    if(func=="IndVal.g" || func=="IndVal") min.order = min(max(round(min.order),1),k)
+    if(func=="IndVal.g" || func=="indval.g" || func=="IndVal"|| func=="indval") min.order = min(max(round(min.order),1),k)
     else min.order = min(max(round(min.order),1),k-1)
   } else {min.order=1}
   if(is.null(max.order)) {
-    if(func=="IndVal.g" || func=="IndVal") max.order=k
+    if(func=="IndVal.g" || func=="indval.g" || func=="IndVal"|| func=="indval") max.order=k
     else max.order = k-1
   } else {
     if(!is.numeric(max.order)) stop("Parameter max.order must be an integer.")
-    if(func=="IndVal.g" || func=="IndVal") max.order = min(max(round(max.order),1),k)
+    if(func=="IndVal.g" || func=="indval.g" || func=="IndVal"|| func=="indval") max.order = min(max(round(max.order),1),k)
     else max.order = min(max(round(max.order),1),k-1)
     if(max.order < min.order) stop("The value of 'max.order' cannot be smaller than that of 'min.order'.")
   }
@@ -184,13 +184,13 @@ indvalcomb <- function(x, memb, comb, min.order, max.order, mode = "group", rest
   B = NULL
   if(func=="r") str = rcomb(x, memb, comb, min.order, max.order, mode = "site", restcomb = restcomb)
   else if(func=="r.g") str = rcomb(x, memb,comb, min.order, max.order, mode = "group", restcomb = restcomb)
-  else if(func=="IndVal") {
+  else if(func=="IndVal"|| func=="indval") {
   	  IndVal = 	indvalcomb(x, memb, comb, min.order, max.order, mode = "site", restcomb = restcomb, indvalcomp=TRUE)
   	  str = IndVal$iv
   	  A = IndVal$A
   	  B = IndVal$B
   	}
-  else if(func=="IndVal.g") {
+  else if(func=="IndVal.g"||func=="indval.g") {
   	  IndVal = 	indvalcomb(x,  memb, comb, min.order, max.order, mode = "group", restcomb = restcomb, indvalcomp=TRUE)
   	  str = IndVal$iv
   	  A = IndVal$A
@@ -217,7 +217,9 @@ indvalcomb <- function(x, memb, comb, min.order, max.order, mode = "group", rest
   	  tmpstr <- switch(func,
 	     r   = rcomb(x, membp, combp, min.order, max.order, mode = "site", restcomb = restcomb),
 	     r.g = rcomb(x, membp, combp, min.order, max.order, mode = "group", restcomb = restcomb),
+	     indval = indvalcomb(x, membp, combp, min.order, max.order, mode = "site", restcomb = restcomb),
 	     IndVal = indvalcomb(x, membp, combp, min.order, max.order, mode = "site", restcomb = restcomb),
+	     indval.g= indvalcomb(x, membp, combp, min.order, max.order, mode = "group", restcomb = restcomb),
 	     IndVal.g= indvalcomb(x, membp, combp, min.order, max.order, mode = "group", restcomb = restcomb)
       )
       tmpmaxstr <- vector(length=nrow(tmpstr))

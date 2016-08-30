@@ -16,7 +16,7 @@ multipatt(x, cluster, func = "IndVal.g", duleg=FALSE, restcomb=NULL,
 \arguments{
   \item{x}{Community data table}
   \item{cluster}{A vector representing a partition of sites}
-  \item{func}{Species-site group association function. Four values are accepted \code{"IndVal"}, \code{"IndVal.g"}, \code{"r"} and \code{"r.g"}.}
+  \item{func}{Species-site group association function. Four values are accepted \code{"IndVal"}, \code{"IndVal.g"}, \code{"r"} and \code{"r.g"} (lowercase values are also accepted).}
   \item{duleg}{If TRUE, site group combinations are not considered, only the original site groups, like in Dufrêne & Legendre (1997). Internally, \code{duleg = TRUE} equals \code{max.order = 1}.}
   \item{restcomb}{A vector of integer values used to restrict the combinations of site groups to those with ecological sense according to the analyst. The default \code{NULL} indicates that all combinations are used. If \code{duleg=TRUE} this argument is ignored.} 
   \item{min.order}{An integer indicating the minimum order of site group combinations (by default \code{max.order=1} for singletons). Cannot be larger than \code{max.order}.}

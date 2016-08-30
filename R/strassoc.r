@@ -1,6 +1,8 @@
 `strassoc` <-
 function(X, cluster,func="r",group=NULL, nboot=0, alpha=0.05, c=1) {
 
+  func <- match.arg(func, c("r", "r.g", "indval", "IndVal", "indval.g", "IndVal.g","a", "A", "a.g", "A.g", "B", "b","cos", "cos.g", "r.ind", "r.ind.g", "s.ind", "s.ind.g"))
+  
 IndVal1<-function(sav,gmv,group=NULL) {
    gmv= as.factor(gmv)
    means = vector("numeric",length(levels(gmv)))
@@ -297,11 +299,11 @@ cos.s<-function(sav, gmv, group=NULL) {
 	else if(func=="r.ind.g") a= r.ind.g(sav,gmv,group,c)
 	else if(func=="s.ind") a= s.ind.s(sav,gmv,group,c)
 	else if(func=="s.ind.g") a= s.ind.g(sav,gmv,group,c)
-	else if(func=="IndVal.g") a = IndVal1(sav,gmv,group)[,3]
-	else if(func=="IndVal") a = IndVal2(sav,gmv,group)[,3]
-	else if(func=="A.g") a = IndVal1(sav,gmv,group)[,1]
-	else if(func=="A") a = A(sav,gmv,group)
-	else if(func=="B") a = IndVal2(sav,gmv,group)[,2]
+	else if(func=="IndVal.g" || func=="indval.g") a = IndVal1(sav,gmv,group)[,3]
+	else if(func=="IndVal" || func == "indval") a = IndVal2(sav,gmv,group)[,3]
+	else if(func=="A.g" || func == "a.g") a = IndVal1(sav,gmv,group)[,1]
+	else if(func=="A" || func == "a") a = A(sav,gmv,group)
+	else if(func=="B" || func == "b") a = IndVal2(sav,gmv,group)[,2]
 	return (a)
   }	
   

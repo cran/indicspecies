@@ -13,7 +13,7 @@ strassoc(X, cluster, func = "r", group = NULL, nboot = 0, alpha = 0.05, c = 1)
 \arguments{
   \item{X}{species data (rows are sites, columns are species).}
   \item{cluster}{a vector of numeric group labels for the sites.}
-  \item{func}{the association index to be used. Accepted function names: "r", "r.g", "IndVal", "IndVal.g", "A", "A.g", "B", "cos", "cos.g", "r.ind", "r.ind.g", "s.ind", "s.ind.g".}
+  \item{func}{the association index to be used. Accepted function names: "r", "r.g", "IndVal", "IndVal.g", "A", "A.g", "B", "cos", "cos.g", "r.ind", "r.ind.g", "s.ind", "s.ind.g" (lowercase values are also accepted).}
   \item{group}{Group for which association values are to be computed. If group=NULL, association values will be computed for all groups.}
   \item{nboot}{Number of bootstrap samples.}
   \item{alpha}{Error in confidence intervals }
