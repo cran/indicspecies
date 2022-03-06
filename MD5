@@ -1,10 +1,10 @@
-29514a62505c8ad65574cb297882b783 *DESCRIPTION
+6efa55e9fff68e6e996f3d649bb697bb *DESCRIPTION
 2674ef634a5213313ee6ddb614012baf *NAMESPACE
-69e6d1bbb826d9a73ae96799e21735af *NEWS.md
+ac08d6fca8406f78862660ba7f04d234 *NEWS.md
 ad032685b4cdea897dac67250ec4bc02 *R/combinespecies.r
 641ae3de13ece593fbad0cb377eeb820 *R/coverage.r
 77f3e41676d97919cd5880ae12f6b088 *R/indicators.r
-12964c1ed37398255a8995ae0eae837b *R/multipatt.r
+0093eaf0b9ab086ed4859f180ec977d8 *R/multipatt.r
 a3bde6dcd0c253a91e2deca587941716 *R/nichecentroid.R
 ca5aea4900ce1e47d185ab9d6513b950 *R/nichedispl.R
 975b9244867b1b1af65b302c7c4bfc72 *R/nicheoverlap.R
@@ -27,10 +27,10 @@ f6f9c5c0af9ed44654019a6406b8f7a7 *data/pigeons.rda
 e70c725ca0cbf64b2cd7a4bb86771e30 *inst/CITATION
 d67aa4be776b0819e50065ffb3f80a99 *inst/doc/IndicatorSpeciesAnalysis.R
 c575bd3f2bb4d8365537c7e2d8506777 *inst/doc/IndicatorSpeciesAnalysis.Rmd
-06a05303ec6f7edeb3db9d2472ea8f42 *inst/doc/IndicatorSpeciesAnalysis.html
+f306aef721501271a27b63fbfed8f61d *inst/doc/IndicatorSpeciesAnalysis.html
 76a9caf62922679e60cf9ff23ea7aad9 *inst/doc/PigeonExample.R
 bb7dbd802719b2b941ee787874264445 *inst/doc/PigeonExample.Rmd
-e4c18c217277adab849dc01530b7d04a *inst/doc/PigeonExample.html
+9a0f28b51aa0be8cc1b60862f837502d *inst/doc/PigeonExample.html
 4df30dbb818eeb8a74f7177894ef27fe *man/birds.Rd
 ccabe47939960db567d0e5a0b95680ac *man/combinespecies.Rd
 8d6fb40b2b4e44f767a04d6a542f359e *man/coverage.Rd

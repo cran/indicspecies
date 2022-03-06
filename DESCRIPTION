@@ -1,8 +1,8 @@
 Package: indicspecies
 Type: Package
 Title: Relationship Between Species and Groups of Sites
-Version: 1.7.11
-Date: 2022-03-03
+Version: 1.7.12
+Date: 2022-03-05
 Authors@R: c(
 	person('Miquel', 'De Cáceres', role=c('aut','cre'),
 	email='miquelcaceres@gmail.com'),
@@ -17,10 +17,10 @@ URL: https://emf-creaf.github.io/indicspecies/
 LazyLoad: yes
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2022-03-04 12:48:26 UTC; miquel
+Packaged: 2022-03-05 22:37:15 UTC; miquel
 Author: Miquel De Cáceres [aut, cre],
   Florian Jansen [aut],
   Noah Dell [aut]
 Maintainer: Miquel De Cáceres <miquelcaceres@gmail.com>
 Repository: CRAN
-Date/Publication: 2022-03-04 13:10:05 UTC
+Date/Publication: 2022-03-06 07:50:02 UTC
