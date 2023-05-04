@@ -13,29 +13,42 @@
 <meta name="author" content="Miquel De Cáceres, CREAF" />
 <meta name="author" content="Oriol Lapiedra, CREAF" />
 
-<meta name="date" content="2022-03-05" />
+<meta name="date" content="2023-05-04" />
 
 <title>Usage of the niche metric functions (former ‘resniche’ package)</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
@@ -53,55 +66,54 @@ pre > code.sourceCode { white-space: pre-wrap; }
 pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {   }
+{ }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -110,13 +122,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -128,29 +147,209 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 <style type="text/css">
-/* for pandoc --citeproc since 2.11 */
+
 div.csl-bib-body { }
 div.csl-entry {
-  clear: both;
+clear: both;
 }
 .hanging div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
+margin-left:2em;
+text-indent:-2em;
 }
 div.csl-left-margin {
-  min-width:2em;
-  float:left;
+min-width:2em;
+float:left;
 }
 div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
+margin-left:2em;
+padding-left:1em;
 }
 div.csl-indent {
-  margin-left: 2em;
+margin-left: 2em;
 }
 </style>
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -162,38 +361,53 @@ div.csl-indent {
 
 
 
-<h1 class="title toc-ignore">Usage of the niche metric functions (former ‘resniche’ package)</h1>
+<h1 class="title toc-ignore">Usage of the niche metric functions (former
+‘resniche’ package)</h1>
 <h4 class="author">Miquel De Cáceres, CREAF</h4>
 <h4 class="author">Oriol Lapiedra, CREAF</h4>
-<h4 class="date">2022-03-05</h4>
+<h4 class="date">2023-05-04</h4>
 
 
 <div id="TOC">
 <ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#resemblance-between-diet-resources">Resemblance between diet resources</a></li>
-<li><a href="#resource-niche-analysis-at-the-population-level">Resource niche analysis at the population level</a>
+<li><a href="#introduction" id="toc-introduction">Introduction</a></li>
+<li><a href="#resemblance-between-diet-resources" id="toc-resemblance-between-diet-resources">Resemblance between diet
+resources</a></li>
+<li><a href="#resource-niche-analysis-at-the-population-level" id="toc-resource-niche-analysis-at-the-population-level">Resource niche
+analysis at the population level</a>
 <ul>
-<li><a href="#resource-use-of-populations">Resource use of populations</a></li>
-<li><a href="#niche-breadth-in-populations">Niche breadth in populations</a></li>
-<li><a href="#overlap-between-populations">Overlap between populations</a></li>
+<li><a href="#resource-use-of-populations" id="toc-resource-use-of-populations">Resource use of
+populations</a></li>
+<li><a href="#niche-breadth-in-populations" id="toc-niche-breadth-in-populations">Niche breadth in
+populations</a></li>
+<li><a href="#overlap-between-populations" id="toc-overlap-between-populations">Overlap between
+populations</a></li>
 </ul></li>
-<li><a href="#resource-niche-analysis-at-the-individual-level">Resource niche analysis at the individual level</a>
+<li><a href="#resource-niche-analysis-at-the-individual-level" id="toc-resource-niche-analysis-at-the-individual-level">Resource niche
+analysis at the individual level</a>
 <ul>
-<li><a href="#resource-use-of-individuals">Resource use of individuals</a></li>
-<li><a href="#measuring-the-degree-of-individual-specialisation">Measuring the degree of individual specialisation</a></li>
-<li><a href="#measuring-the-degree-of-overlap-between-individuals">Measuring the degree of overlap between individuals</a></li>
+<li><a href="#resource-use-of-individuals" id="toc-resource-use-of-individuals">Resource use of
+individuals</a></li>
+<li><a href="#measuring-the-degree-of-individual-specialisation" id="toc-measuring-the-degree-of-individual-specialisation">Measuring the
+degree of individual specialisation</a></li>
+<li><a href="#measuring-the-degree-of-overlap-between-individuals" id="toc-measuring-the-degree-of-overlap-between-individuals">Measuring
+the degree of overlap between individuals</a></li>
 </ul></li>
-<li><a href="#bibliography">Bibliography</a></li>
+<li><a href="#bibliography" id="toc-bibliography">Bibliography</a></li>
 </ul>
 </div>
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>In this document we show how to use the functions described in <span class="citation">De Cáceres et al. (2011)</span> by following an example of dietary preferences in pigeons belonging to two populations (Moià and Barcelona) in Catalonia (north east of Spain). We begin by loading the library and the data:</p>
+<p>In this document we show how to use the functions described in <span class="citation">De Cáceres et al. (2011)</span> by following an example
+of dietary preferences in pigeons belonging to two populations (Moià and
+Barcelona) in Catalonia (north east of Spain). We begin by loading the
+library and the data:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(indicspecies)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pigeons)</span></code></pre></div>
-<p>The data consists of three items: the resource use matrix for each pigeon population and the matrix of dissimilarities between pairs of resources (seeds).</p>
+<p>The data consists of three items: the resource use matrix for each
+pigeon population and the matrix of dissimilarities between pairs of
+resources (seeds).</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>()</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;dfood&quot;          &quot;diet.barcelona&quot; &quot;diet.moia&quot;      &quot;groups&quot;        </span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] &quot;groupskm&quot;       &quot;indval&quot;         &quot;indvalori&quot;      &quot;indvalrest&quot;    </span></span>
@@ -203,7 +417,8 @@ div.csl-indent {
 </div>
 <div id="resemblance-between-diet-resources" class="section level2">
 <h2>Resemblance between diet resources</h2>
-<p>Before starting any resource niche calculation, we can inspect the matrix of dissimilarities between the <span class="math inline">\(r=6\)</span> resources, <span class="math inline">\(\mathbf{D}\)</span>:</p>
+<p>Before starting any resource niche calculation, we can inspect the
+matrix of dissimilarities between the <span class="math inline">\(r=6\)</span> resources, <span class="math inline">\(\mathbf{D}\)</span>:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dfood</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                Oats      Peas   Popcorn       Soy Sunflower</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Peas      0.7029375                                        </span></span>
@@ -215,13 +430,15 @@ div.csl-indent {
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">hclust</span>(dfood, <span class="at">method=</span><span class="st">&quot;average&quot;</span>), <span class="at">h=</span><span class="sc">-</span><span class="dv">1</span>, <span class="at">xlab=</span><span class="st">&quot;&quot;</span>, </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">&quot;Distance&quot;</span>, <span class="at">main=</span><span class="st">&quot;&quot;</span>, <span class="at">sub=</span><span class="st">&quot;&quot;</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="fl">0.2</span>,<span class="dv">1</span>))</span></code></pre></div>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
-<p>Some seeds are quite similar (e.g. popcorn, wheat or oats), whereas sunflower differs substantially from all other resources.</p>
+<p>Some seeds are quite similar (e.g. popcorn, wheat or oats), whereas
+sunflower differs substantially from all other resources.</p>
 </div>
 <div id="resource-niche-analysis-at-the-population-level" class="section level2">
 <h2>Resource niche analysis at the population level</h2>
 <div id="resource-use-of-populations" class="section level3">
 <h3>Resource use of populations</h3>
-<p>We begin by showing the resource use data for pigeons of Barcelona and Moia, expressed as proportions (i.e., the vector <span class="math inline">\(\mathbf{f}\)</span> for each population):</p>
+<p>We begin by showing the resource use data for pigeons of Barcelona
+and Moia, expressed as proportions (i.e., the vector <span class="math inline">\(\mathbf{f}\)</span> for each population):</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>diet.pop.barcelona <span class="ot">=</span> <span class="fu">colSums</span>(diet.barcelona)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(diet.pop.barcelona<span class="sc">/</span><span class="fu">sum</span>(diet.pop.barcelona), <span class="at">dig=</span><span class="dv">3</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Oats      Peas   Popcorn       Soy Sunflower     Wheat </span></span>
@@ -230,51 +447,77 @@ div.csl-indent {
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(diet.pop.moia<span class="sc">/</span><span class="fu">sum</span>(diet.pop.moia), <span class="at">dig=</span><span class="dv">3</span>)</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Oats      Peas   Popcorn       Soy Sunflower     Wheat </span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     0.002     0.018     0.091     0.045     0.054     0.791</span></span></code></pre></div>
-<p>Whereas pigeons in Moià feed almost exclusively on wheat, those of Barcelona combine wheat and sunflower seeds.</p>
+<p>Whereas pigeons in Moià feed almost exclusively on wheat, those of
+Barcelona combine wheat and sunflower seeds.</p>
 </div>
 <div id="niche-breadth-in-populations" class="section level3">
 <h3>Niche breadth in populations</h3>
-<p>We will determine the resource niche breadth of each of the two populations as <span class="citation">De Cáceres et al. (2011)</span>:</p>
-<p><span class="math inline">\(B_{pop} = (1/2)\sum_{j=1}^r\sum_{k=1}^r{f_jf_kd_{jk}}\)</span></p>
-<p>We first conduct our calculations without taking into account the resemblance between resources (which is equal to stating that <span class="math inline">\(d_{jk}=1\)</span> in all cases):</p>
+<p>We will determine the resource niche breadth of each of the two
+populations as <span class="citation">De Cáceres et al.
+(2011)</span>:</p>
+<p><span class="math inline">\(B_{pop} =
+(1/2)\sum_{j=1}^r\sum_{k=1}^r{f_jf_kd_{jk}}\)</span></p>
+<p>We first conduct our calculations without taking into account the
+resemblance between resources (which is equal to stating that <span class="math inline">\(d_{jk}=1\)</span> in all cases):</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nichevar</span>(<span class="at">P=</span>diet.barcelona, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               B        LC        UC</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Niche 0.2966578 0.2699079 0.3334394</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Niche 0.2966578 0.2664242 0.3356783</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nichevar</span>(<span class="at">P=</span>diet.moia, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               B        LC        UC</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Niche 0.1807663 0.1012183 0.2599718</span></span></code></pre></div>
-<p>In general, we can say that the niche breadth of the population in Moià is smaller than the niche breadth of the population in Barcelona. If we repeat the same calculations with the matrix of resource resemblance, we realize that the niche breadth of both populations becomes smaller:</p>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Niche 0.1807663 0.1038748 0.2608526</span></span></code></pre></div>
+<p>In general, we can say that the niche breadth of the population in
+Moià is smaller than the niche breadth of the population in Barcelona.
+If we repeat the same calculations with the matrix of resource
+resemblance, we realize that the niche breadth of both populations
+becomes smaller:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>popvar.barcelona <span class="ot">=</span> <span class="fu">nichevar</span>(<span class="at">P=</span>diet.barcelona, <span class="at">D=</span>dfood, </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>popvar.barcelona</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               B        LC        UC</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Niche 0.2453822 0.2352728 0.2578303</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               B        LC       UC</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Niche 0.2453822 0.2297968 0.258065</span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>popvar.moia<span class="ot">=</span> <span class="fu">nichevar</span>(<span class="at">P=</span>diet.moia, <span class="at">D=</span>dfood, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>popvar.moia</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               B         LC        UC</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Niche 0.0853328 0.02493894 0.1701466</span></span></code></pre></div>
-<p>The reason is that the first analysis was assuming that all resources were equally (and maximally) distinct, while the second analysis accounts for the similarity between some resources. Moreover, note that the niche breadth of Moià has decreased more than the niche breadth of Barcelona. This reflects that the resources being used by pigeons of Moià are more similar than the resources used by pigeons of Barcelona.</p>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Niche 0.0853328 0.02723257 0.1690477</span></span></code></pre></div>
+<p>The reason is that the first analysis was assuming that all resources
+were equally (and maximally) distinct, while the second analysis
+accounts for the similarity between some resources. Moreover, note that
+the niche breadth of Moià has decreased more than the niche breadth of
+Barcelona. This reflects that the resources being used by pigeons of
+Moià are more similar than the resources used by pigeons of
+Barcelona.</p>
 </div>
 <div id="overlap-between-populations" class="section level3">
 <h3>Overlap between populations</h3>
-<p>We can now calculate the niche overlap between the two pigeon populations: <span class="math display">\[
-O_{12} = \frac{\sum_{j=1}^r\sum_{k=1}^r{f_{1j}f_{2k}(1-d_{jk}^2)}}{\sqrt{\sum_{j=1}^r\sum_{k=1}^r{f_{1j}f_{1k}(1-d_{jk}^2)}\sum_{j=1}^r\sum_{k=1}^r{f_{2j}f_{2k}(1-d_{jk}^2)}}}
+<p>We can now calculate the niche overlap between the two pigeon
+populations: <span class="math display">\[
+O_{12} =
+\frac{\sum_{j=1}^r\sum_{k=1}^r{f_{1j}f_{2k}(1-d_{jk}^2)}}{\sqrt{\sum_{j=1}^r\sum_{k=1}^r{f_{1j}f_{1k}(1-d_{jk}^2)}\sum_{j=1}^r\sum_{k=1}^r{f_{2j}f_{2k}(1-d_{jk}^2)}}}
 \]</span> Using function <code>nicheoverlap()</code>:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nicheoverlap</span>(<span class="at">P1=</span>diet.barcelona, <span class="at">P2=</span>diet.moia, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 O        LC        UC</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Overlap 0.7419319 0.4645122 0.9290476</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 O      LC        UC</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Overlap 0.7419319 0.44017 0.9360427</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nicheoverlap</span>(<span class="at">P1=</span>diet.barcelona, <span class="at">P2=</span>diet.moia, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>, <span class="at">D =</span> dfood)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 O     LC        UC</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Overlap 0.7912472 0.5411 0.9496495</span></span></code></pre></div>
-<p>If we include the resemblance between resources, the degree of overlap increases, for the same reason that we obtained smaller niche breadth statistics when resemblances were included.</p>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 O        LC        UC</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Overlap 0.7912472 0.5586875 0.9434872</span></span></code></pre></div>
+<p>If we include the resemblance between resources, the degree of
+overlap increases, for the same reason that we obtained smaller niche
+breadth statistics when resemblances were included.</p>
 </div>
 </div>
 <div id="resource-niche-analysis-at-the-individual-level" class="section level2">
 <h2>Resource niche analysis at the individual level</h2>
-<p>In this section, we perform a resource niche analysis at individual level. In particular, we are interested in assessing how much the resource niche of individuals differs from that of their corresponding population. For this, we need to calculate a measure of the degree of individual specialization.</p>
+<p>In this section, we perform a resource niche analysis at individual
+level. In particular, we are interested in assessing how much the
+resource niche of individuals differs from that of their corresponding
+population. For this, we need to calculate a measure of the degree of
+individual specialization.</p>
 <div id="resource-use-of-individuals" class="section level3">
 <h3>Resource use of individuals</h3>
-<p>We begin by showing the resource use data for all 23 pigeons in the sample from the Barcelona population, expressed as proportions (i.e., matrix <span class="math inline">\(\mathbf{F}\)</span> for Barcelona):</p>
+<p>We begin by showing the resource use data for all 23 pigeons in the
+sample from the Barcelona population, expressed as proportions (i.e.,
+matrix <span class="math inline">\(\mathbf{F}\)</span> for
+Barcelona):</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">sweep</span>(diet.barcelona, <span class="dv">1</span>, <span class="at">FUN=</span><span class="st">&quot;/&quot;</span>, </span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rowSums</span>(diet.barcelona)), <span class="at">dig=</span><span class="dv">3</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Oats  Peas Popcorn   Soy Sunflower Wheat</span></span>
@@ -301,7 +544,10 @@ O_{12} = \frac{\sum_{j=1}^r\sum_{k=1}^r{f_{1j}f_{2k}(1-d_{jk}^2)}}{\sqrt{\sum_{j
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21 0.000 0.000   0.000 0.000     0.910 0.090</span></span>
 <span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 22 0.000 0.000   0.019 0.019     0.786 0.175</span></span>
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 23 0.442 0.000   0.000 0.000     0.000 0.558</span></span></code></pre></div>
-<p>We see that most individuals in Barcelona feed on either sunflower or wheat, but there are some individuals (like pigeon 9) which prefer oats. Now we display the resource use data for the 19 pigeons representing the population in Moià (i.e., matrix <span class="math inline">\(\mathbf{F}\)</span> for Moià):</p>
+<p>We see that most individuals in Barcelona feed on either sunflower or
+wheat, but there are some individuals (like pigeon 9) which prefer oats.
+Now we display the resource use data for the 19 pigeons representing the
+population in Moià (i.e., matrix <span class="math inline">\(\mathbf{F}\)</span> for Moià):</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">sweep</span>(diet.moia, <span class="dv">1</span>, <span class="at">FUN=</span><span class="st">&quot;/&quot;</span>, </span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rowSums</span>(diet.moia)), <span class="at">dig=</span><span class="dv">3</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Oats  Peas Popcorn   Soy Sunflower Wheat</span></span>
@@ -324,13 +570,16 @@ O_{12} = \frac{\sum_{j=1}^r\sum_{k=1}^r{f_{1j}f_{2k}(1-d_{jk}^2)}}{\sqrt{\sum_{j
 <span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 17 0.000 0.000   0.430 0.000     0.000 0.570</span></span>
 <span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18 0.000 0.000   0.000 0.000     0.583 0.417</span></span>
 <span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 19 0.000 0.000   0.000 0.000     1.000 0.000</span></span></code></pre></div>
-<p>Many pigeons from Moià feed on wheat seeds almost exclusively, but some of them have broader preferences.</p>
+<p>Many pigeons from Moià feed on wheat seeds almost exclusively, but
+some of them have broader preferences.</p>
 </div>
 <div id="measuring-the-degree-of-individual-specialisation" class="section level3">
 <h3>Measuring the degree of individual specialisation</h3>
-<p>We begin our resource niche analysis by calculating the niche breadth of each individual in the population, <span class="math inline">\(B_i\)</span>: <span class="math display">\[
+<p>We begin our resource niche analysis by calculating the niche breadth
+of each individual in the population, <span class="math inline">\(B_i\)</span>: <span class="math display">\[
 B_i = (1/2)\sum_{j=1}^r\sum_{k=1}^r{f_{ij}f_{ik}d_{jk}}
-\]</span> We calculate the values for the individuals of both populations:</p>
+\]</span> We calculate the values for the individuals of both
+populations:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>indvar.barcelona<span class="ot">&lt;-</span><span class="fu">nichevar</span>(<span class="at">P=</span>diet.barcelona, <span class="at">D=</span>dfood)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(indvar.barcelona)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        B          </span></span>
@@ -349,8 +598,12 @@ B_i = (1/2)\sum_{j=1}^r\sum_{k=1}^r{f_{ij}f_{ik}d_{jk}}
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Mean   :0.04031  </span></span>
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3rd Qu.:0.01861  </span></span>
 <span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Max.   :0.24306</span></span></code></pre></div>
-<p>Most individuals have niche breadths that are smaller than the niche breadth of their corresponding population, although a few individuals in Moià have niche breadths larger than the population value. A niche breadth equal to zero indicates that only one resource is exploited.</p>
-<p>We can compare the niche breadth values of the two populations using a non-parametric test.</p>
+<p>Most individuals have niche breadths that are smaller than the niche
+breadth of their corresponding population, although a few individuals in
+Moià have niche breadths larger than the population value. A niche
+breadth equal to zero indicates that only one resource is exploited.</p>
+<p>We can compare the niche breadth values of the two populations using
+a non-parametric test.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(indvar.barcelona<span class="sc">$</span>B, indvar.moia<span class="sc">$</span>B)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in wilcox.test.default(indvar.barcelona$B, indvar.moia$B): cannot</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; compute exact p-value with ties</span></span>
@@ -360,17 +613,30 @@ B_i = (1/2)\sum_{j=1}^r\sum_{k=1}^r{f_{ij}f_{ik}d_{jk}}
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; data:  indvar.barcelona$B and indvar.moia$B</span></span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; W = 328, p-value = 0.005446</span></span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; alternative hypothesis: true location shift is not equal to 0</span></span></code></pre></div>
-<p>The Wilcoxon test confirms that the niche breadth of pigeons in Barcelona is generally higher than that of pigeons in Moià, as we saw at the population level.</p>
-<p>In order to calculate the degree of individual specialization, <span class="citation">Bolnick et al. (2002)</span> defined WIC/TNW, i.e. the ratio between the within individual component (i.e. average niche width) and the total niche width of the population. Similarly we define the following specialization measure, that takes into account the resemblance between resources: <span class="math display">\[
+<p>The Wilcoxon test confirms that the niche breadth of pigeons in
+Barcelona is generally higher than that of pigeons in Moià, as we saw at
+the population level.</p>
+<p>In order to calculate the degree of individual specialization, <span class="citation">Bolnick et al. (2002)</span> defined WIC/TNW, i.e. the
+ratio between the within individual component (i.e. average niche width)
+and the total niche width of the population. Similarly we define the
+following specialization measure, that takes into account the
+resemblance between resources: <span class="math display">\[
 S_{pop} = \frac{\sum_{i=n}^n{B_i}/n}{B_{pop}}
-\]</span> where <span class="math inline">\(B_i\)</span> is the niche breadth of each individual, and <span class="math inline">\(B_{pop}\)</span> is the niche breadth of the population. Note that it is possible that <span class="math inline">\(B_i\)</span> values can be larger than <span class="math inline">\(B_{pop}\)</span>. However, we do not expect the average of <span class="math inline">\(B_i\)</span> values to be larger than <span class="math inline">\(B_{pop}\)</span>. If we calculate <span class="math inline">\(S_{pop}\)</span> for the two populations we have:</p>
+\]</span> where <span class="math inline">\(B_i\)</span> is the niche
+breadth of each individual, and <span class="math inline">\(B_{pop}\)</span> is the niche breadth of the
+population. Note that it is possible that <span class="math inline">\(B_i\)</span> values can be larger than <span class="math inline">\(B_{pop}\)</span>. However, we do not expect the
+average of <span class="math inline">\(B_i\)</span> values to be larger
+than <span class="math inline">\(B_{pop}\)</span>. If we calculate <span class="math inline">\(S_{pop}\)</span> for the two populations we
+have:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>Spec.barcelona <span class="ot">=</span> <span class="fu">mean</span>(indvar.barcelona<span class="sc">$</span>B)<span class="sc">/</span>popvar.barcelona<span class="sc">$</span>B</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>Spec.barcelona</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.4551234</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>Spec.moia <span class="ot">=</span> <span class="fu">mean</span>(indvar.moia<span class="sc">$</span>B)<span class="sc">/</span>popvar.moia<span class="sc">$</span>B</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>Spec.moia</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.4723618</span></span></code></pre></div>
-<p>Surprisingly, the degree of specialization in Moià seems slightly higher than that in Barcelona. To see whether this holds statistically, we can calculate the degree of specialization of each individual: <span class="math display">\[
+<p>Surprisingly, the degree of specialization in Moià seems slightly
+higher than that in Barcelona. To see whether this holds statistically,
+we can calculate the degree of specialization of each individual: <span class="math display">\[
 S_i = \frac{B_i}{B_{pop}}
 \]</span> which, in R, is:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>Spec.ind.barcelona <span class="ot">=</span> indvar.barcelona<span class="sc">$</span>B<span class="sc">/</span>popvar.barcelona<span class="sc">$</span>B</span>
@@ -385,19 +651,28 @@ S_i = \frac{B_i}{B_{pop}}
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; data:  Spec.ind.barcelona and Spec.ind.moia</span></span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; W = 277, p-value = 0.1392</span></span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; alternative hypothesis: true location shift is not equal to 0</span></span></code></pre></div>
-<p>Which tells us that those differences in individual specialization are not statistically significant.</p>
+<p>Which tells us that those differences in individual specialization
+are not statistically significant.</p>
 </div>
 <div id="measuring-the-degree-of-overlap-between-individuals" class="section level3">
 <h3>Measuring the degree of overlap between individuals</h3>
-<p>The idea of this section is to determine how much the niche of each individual overlaps with the niche of other individuals in the population. This can be done by calling function <code>nicheoverlap()</code> using <code>mode = &quot;pairwise&quot;</code>:</p>
+<p>The idea of this section is to determine how much the niche of each
+individual overlaps with the niche of other individuals in the
+population. This can be done by calling function
+<code>nicheoverlap()</code> using <code>mode = &quot;pairwise&quot;</code>:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>O.barcelona <span class="ot">=</span> <span class="fu">nicheoverlap</span>(diet.barcelona,<span class="at">D=</span>dfood, <span class="at">mode=</span><span class="st">&quot;pairwise&quot;</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>O.moia <span class="ot">=</span> <span class="fu">nicheoverlap</span>(diet.moia,<span class="at">D=</span>dfood, <span class="at">mode=</span><span class="st">&quot;pairwise&quot;</span>)</span></code></pre></div>
-<p>These calls to <code>nicheoverlap()</code> return a symmetric square matrix with as many rows and columns as individuals in the resource use data frame. Each cell value in the symmetric matrix is the overlap between two individuals of the population. Using these matrices we can derive the average overlap in each population:</p>
+<p>These calls to <code>nicheoverlap()</code> return a symmetric square
+matrix with as many rows and columns as individuals in the resource use
+data frame. Each cell value in the symmetric matrix is the overlap
+between two individuals of the population. Using these matrices we can
+derive the average overlap in each population:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(O.barcelona[<span class="fu">lower.tri</span>(O.barcelona)])</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.6726374</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(O.moia[<span class="fu">lower.tri</span>(O.moia)])</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.8438816</span></span></code></pre></div>
-<p>We can also calculate the average overlap between each individual and the remaining individuals in its population:</p>
+<p>We can also calculate the average overlap between each individual and
+the remaining individuals in its population:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>O.barcelona.ind <span class="ot">=</span> (<span class="fu">rowSums</span>(O.barcelona)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">/</span>(<span class="fu">nrow</span>(O.barcelona)<span class="sc">-</span><span class="dv">1</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(O.barcelona.ind)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
@@ -406,7 +681,12 @@ S_i = \frac{B_i}{B_{pop}}
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(O.moia.ind)</span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.09157 0.89915 0.90649 0.84388 0.90965 0.91134</span></span></code></pre></div>
-<p>We substracted one in the numerator and denominator in order to exclude the target individual from the average (the overlap between a resource niche and itself is always one). Apparently, the individuals in Moià have a larger degree of overlap with individuals of their population than individuals in Barcelona. A non-parametric test seems to confirm this difference:</p>
+<p>We substracted one in the numerator and denominator in order to
+exclude the target individual from the average (the overlap between a
+resource niche and itself is always one). Apparently, the individuals in
+Moià have a larger degree of overlap with individuals of their
+population than individuals in Barcelona. A non-parametric test seems to
+confirm this difference:</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(O.barcelona.ind, O.moia.ind)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in wilcox.test.default(O.barcelona.ind, O.moia.ind): cannot compute</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; exact p-value with ties</span></span>
@@ -422,10 +702,16 @@ S_i = \frac{B_i}{B_{pop}}
 <h2 class="unnumbered">Bibliography</h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Bolnick2002" class="csl-entry">
-Bolnick, Daniel I., Louie H. Yang, James a. Fordyce, Jeremy M. Davis, and Richard Svanbäck. 2002. <span>“<span class="nocase">Measuring individual-level resource specialization</span>.”</span> <em>Ecology</em> 83 (10): 2936–41.
+Bolnick, Daniel I., Louie H. Yang, James a. Fordyce, Jeremy M. Davis,
+and Richard Svanbäck. 2002. <span>“<span class="nocase">Measuring
+individual-level resource specialization</span>.”</span>
+<em>Ecology</em> 83 (10): 2936–41.
 </div>
 <div id="ref-DeCaceres2011" class="csl-entry">
-De Cáceres, Miquel, Daniel Sol, Oriol Lapiedra, and Pierre Legendre. 2011. <span>“<span class="nocase">A framework for estimating niche metrics using the resemblance between qualitative resources</span>.”</span> <em>Oikos</em> 120 (February): 1341–50.
+De Cáceres, Miquel, Daniel Sol, Oriol Lapiedra, and Pierre Legendre.
+2011. <span>“<span class="nocase">A framework for estimating niche
+metrics using the resemblance between qualitative
+resources</span>.”</span> <em>Oikos</em> 120 (February): 1341–50.
 </div>
 </div>
 </div>
