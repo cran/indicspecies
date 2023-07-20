@@ -13,7 +13,7 @@
 <meta name="author" content="Miquel De Cáceres, CREAF" />
 <meta name="author" content="Oriol Lapiedra, CREAF" />
 
-<meta name="date" content="2023-05-04" />
+<meta name="date" content="2023-07-20" />
 
 <title>Usage of the niche metric functions (former ‘resniche’ package)</title>
 
@@ -365,7 +365,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ‘resniche’ package)</h1>
 <h4 class="author">Miquel De Cáceres, CREAF</h4>
 <h4 class="author">Oriol Lapiedra, CREAF</h4>
-<h4 class="date">2023-05-04</h4>
+<h4 class="date">2023-07-20</h4>
 
 
 <div id="TOC">
@@ -403,32 +403,32 @@ the degree of overlap between individuals</a></li>
 of dietary preferences in pigeons belonging to two populations (Moià and
 Barcelona) in Catalonia (north east of Spain). We begin by loading the
 library and the data:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(indicspecies)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pigeons)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(indicspecies)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">data</span>(pigeons)</span></code></pre></div>
 <p>The data consists of three items: the resource use matrix for each
 pigeon population and the matrix of dissimilarities between pairs of
 resources (seeds).</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>()</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;dfood&quot;          &quot;diet.barcelona&quot; &quot;diet.moia&quot;      &quot;groups&quot;        </span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] &quot;groupskm&quot;       &quot;indval&quot;         &quot;indvalori&quot;      &quot;indvalrest&quot;    </span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [9] &quot;indvalspcomb&quot;   &quot;p&quot;              &quot;pcv&quot;            &quot;phi&quot;           </span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13] &quot;prefsign&quot;       &quot;prefstat&quot;       &quot;sc&quot;             &quot;sc2&quot;           </span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [17] &quot;wetcomb&quot;        &quot;wetkm&quot;          &quot;wetland&quot;        &quot;wetlandpa&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">ls</span>()</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;dfood&quot;          &quot;diet.barcelona&quot; &quot;diet.moia&quot;      &quot;groups&quot;        </span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt;  [5] &quot;groupskm&quot;       &quot;indval&quot;         &quot;indvalori&quot;      &quot;indvalrest&quot;    </span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt;  [9] &quot;indvalspcomb&quot;   &quot;p&quot;              &quot;pcv&quot;            &quot;phi&quot;           </span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; [13] &quot;prefsign&quot;       &quot;prefstat&quot;       &quot;sc&quot;             &quot;sc2&quot;           </span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; [17] &quot;wetcomb&quot;        &quot;wetkm&quot;          &quot;wetland&quot;        &quot;wetlandpa&quot;</span></span></code></pre></div>
 </div>
 <div id="resemblance-between-diet-resources" class="section level2">
 <h2>Resemblance between diet resources</h2>
 <p>Before starting any resource niche calculation, we can inspect the
 matrix of dissimilarities between the <span class="math inline">\(r=6\)</span> resources, <span class="math inline">\(\mathbf{D}\)</span>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dfood</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                Oats      Peas   Popcorn       Soy Sunflower</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Peas      0.7029375                                        </span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Popcorn   0.3706196 0.5070959                              </span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Soy       0.7738801 0.6645980 0.8638219                    </span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sunflower 0.7656489 0.9773428 0.8784905 0.8669801          </span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Wheat     0.3948828 0.5705974 0.2836482 0.7740283 1.0000000</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>dfood</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt;                Oats      Peas   Popcorn       Soy Sunflower</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; Peas      0.7029375                                        </span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; Popcorn   0.3706196 0.5070959                              </span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; Soy       0.7738801 0.6645980 0.8638219                    </span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; Sunflower 0.7656489 0.9773428 0.8784905 0.8669801          </span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; Wheat     0.3948828 0.5705974 0.2836482 0.7740283 1.0000000</span></span></code></pre></div>
 <p>These can be summarized using a dendrogram. For example:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">hclust</span>(dfood, <span class="at">method=</span><span class="st">&quot;average&quot;</span>), <span class="at">h=</span><span class="sc">-</span><span class="dv">1</span>, <span class="at">xlab=</span><span class="st">&quot;&quot;</span>, </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">&quot;Distance&quot;</span>, <span class="at">main=</span><span class="st">&quot;&quot;</span>, <span class="at">sub=</span><span class="st">&quot;&quot;</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="fl">0.2</span>,<span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">hclust</span>(dfood, <span class="at">method=</span><span class="st">&quot;average&quot;</span>), <span class="at">h=</span><span class="sc">-</span><span class="dv">1</span>, <span class="at">xlab=</span><span class="st">&quot;&quot;</span>, </span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">&quot;Distance&quot;</span>, <span class="at">main=</span><span class="st">&quot;&quot;</span>, <span class="at">sub=</span><span class="st">&quot;&quot;</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="fl">0.2</span>,<span class="dv">1</span>))</span></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAAAAHgCAMAAABKCk6nAAAC91BMVEUAAAABAQECAgIDAwMEBAQFBQUGBgYHBwcICAgJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUWFhYXFxcYGBgZGRkaGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQlJSUmJiYnJycoKCgpKSkqKiorKyssLCwtLS0uLi4vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg5OTk6Ojo7Ozs8PDw9PT0+Pj4/Pz9AQEBBQUFCQkJDQ0NERERFRUVGRkZHR0dISEhJSUlKSkpLS0tMTExNTU1OTk5PT09QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1eXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZoaGhpaWlqampra2tsbGxtbW1ubm5vb29wcHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+AgICBgYGCgoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKUlJSVlZWWlpaXl5eYmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWmpqanp6eoqKipqamqqqqrq6usrKytra2urq6wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e4uLi5ubm6urq7u7u8vLy9vb2+vr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnKysrLy8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc3Nzd3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u7u7v7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7///8Md4VyAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAT2ElEQVR4nO3da2BU5Z3H8SeQhJCEkBCFEECNWKCICAI2CLYq90tKirC1bWq9IIrKggUhKKLCLjd1IV5AQdigFDBsACFAEBAsrYWCVVouReiyllJAbkIChOR5sTMnzGHSzJmZ81yYZ/78Pi8yQ3KeJwe/kjPnzMwTxoE0FukdAL0QmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJk5J4KqTPsdUTAcKKQm8Kc0nbp3fp/8yLtImXlLx14tqin9EZ//O7w9vZ0+LsJS/q/3rRSGtgZ9SO7l7mQiMwMQhMHEITBwCE4fAxCEwcQhMHAITh8DEiQSu/KvjJV4ENo27wB8PGbiAz01nCVOqAm+AwKZxFXgZ69I/bkTy5JIX4+YH3gKBTeMqcEdPsXfYVM+9/I6Bt0Bg07gKnLia8+PsM8+9kqTAWyCwaVwF/t50zn/PFnruzW4TeAsENo2rwFMTRr3SrEvm+hMr0l8IvAUCm8ZV4IoXM2988tIwxtiA84G3QGDTiJwH7yn83OlLCGwawStZF84F/jwCm0Yw8EM1xn0z3fcqt5s3+n0agQ0gGHjuMP8/7bNfp5q53u/TCGwAPNlAnOvAF4+fDPJVBDaNu8CHJ2TFMFbvtvEHHTZAYNO4CrwzscVTsxcVFjxza9oXgbdAYNO4Cnxfv7LqOxU/6xl4CwQ2javAKUW+e1tTA2+hOvAuyfcmTZAaXiK9/5HnKnDnEb57L/8g8BaqA/97D6l3F/YZKzP6F92l9z/yXAUuiuk3f9uevb8vHFy3KPAWygPPkp5C3NbuEfzmqrh8yc79zCvmgTUOGyCwadyeB5/cXVr65beOX0Zg0xh+JQuBZSGwMwSuDYFNg8DOELg2BDYNAjtD4NoQ2DQI7AyBa0Ng0yCwMwSuDYFNoyTwZ518klf4fRqBDaAk8MUdPu23+X0agQ2AH9HOELg2BDYNAjtD4NoQ2DQI7AyBa0Ng0yCwMwSuDYFNg8DOELg2BDaNSOBT+yudvoTApnEXeFHXL/nRgYw1cPrvjsCmcRV4Nrv3KO/d7J2SsbGFgbdAYNO4CpyVz/lRtsVzb/w1WowUgWW5Cpy+nPOvmHeJrDUNAm+BwKZxFTi3/0Ve0WCD517+tXp/MAJLchV4T+N2MzZNyXx/U37cbwJvgcCmcfcoev9Tjaw3CN++1GEDBDaN2/PgSwd/t3qb0yJKCGwewxcjRWBZShYjvfqiuzvxojvDKFmMFC+bNRf9Jxum9RTVJU14aK9D0vutiOGLkSoI3GdqqaC1C0VHlt65MfSOXRuGL0aqIvBa6Sncuz86A1/7xUgRWJbhi5EisCzDFyNFYFmmL0aKwJLoL0aKwC5E42KkCOxK9C1GisAqIXA1BA4TAstCYC0QOEwILAuBtUDgMCGwLATWAoHDhMCyEFgLBA4TAstCYC2IBfb7Fe/r/D6NwAZQEvjvM3y/r/Nm/78YAhsAP6K1QOAwIbAsBNYCgcOEwLIQWAsEDhMCy0JgLRA4TAgsC4G1QOAwIbAsBNYiygMXH3P6CgJXi/LAbIPTVxC4WpQG/p+8aqxHXl7gLRC4WpQGXp3IOmV7sO9nZwfeAoGrRWlgvrfT3fs4fkSHFq2B+aVxye8gcGhRG5jzzS36/QOBQzEz8OGvwhlx6qc3IHAoJgZem8EY71EQxpjfjNrn9CUErmZg4EWxwxcxPjFmbljDomi1WQSu1nY0P+H5w9h2YQ2rudrspjSfWPMWI0XgaolrrMBrksIaVnO12aqTPl3wL9hiYOC7JlmBX20vNR1+RFczMPCCuMnb2LH58W+EGBB9q83KB75w0q17V7gdcVp6LwO7eiwtSGeM1RtfFWzr63S12XYN01yKT3E7ot4S6d0MyO/B0rnPl248HnTj63W12Zv/Jj1FSMPe0zPv1cCHZ5fzfa9/E2zj63W1WRKBdyfHn+W70lP/EGTj63W1WRKBe3c/4vlYnnNfkI2v19VmSQROW2zdrEsJsvH1utosicCt3rZu5twWbOvrdLVZEoEnpn5UwStXNhobfPvrcrVZEoEvP14nNiOeDb0oNR0Ci9J/msT3F06Z9yfJ6RBY1DUIrAICi9Ie+Nunu2VbpKZDYFHaAw+JzRljkZoOgUVpD5wyQ8V0CCxKd+BL7FMV0yGwKO3/gnvkqZgOgUVpD/xWWsf8ma95SE2HwKK0B27uIzUdAosy+jz49EfLrmi91e/TCOzCtQp84iWBSXYO9Ulf7fdpBHZBe+CqD5/3ngX3byQ1HX5Ei9Ie+BXWOi4zu2lSodR0CCxKe+CsUfy9/rzs7o+lpkPgwCpHDw+hzQ9DbTFb6Dvbgeut4jubcV7s8FqcMCFwYGVxc0N4eWaIDV7sIPSd7cAtX+dnY47xLclSfxEEDqysvvRO7JIMPDJtDm8/4sDQNlJ7gcCBGRD4zOAH+dY4FrdMai8QODADAp/2vmfl5Pqvz0jtBQIHZkBgdtS62R7sZbOhIXBgkQ68PTeX9c31uj1Lai8QOLBIB96Vl8cetBaxe3ST1F4gcGCRDuyR7fxiZz+XD5Zbt+VHA38dgQMzILBlb0nQzBUT67P6z1/23Fvo8CwUAgdmQODDvcbw5XXZDQ5v/LXMiP110ejYRzkCu2VA4NzMYt6hz8FeA4Ns3Crf8+EDtgKB3TIgcKN3+RFWyhffGGTjJOvZ3ryscgR2yYDAqUv4+wnlfFWwa9FdnvN+/GfjpxHYJQMC975nwx2D+LkBnYNsXMBGrr/A+eq6D49DYFcMCPxFE5ayk7eKXxVs68kp7IDnZlUmQ2BXDAjMy3Z4TpGW7Q+++cWvL3hvKj6ZE/jrCByYCYFdub4WI43+wPNK+TyfsIbVXIzU71WVJX6fRmBbpAMnP8RTfcIaVnMx0lO+l0Uve/M7v08jsC3SgfVAYFsUBQ6+GGkNCGyLfODKlf/5xBNTV1UG3zrkYqQ1ILAt4oFL27D4W7LiWZvSYBuHXoy0BgS2RTrw7uR7NlRxXrWpe/Kfg2wcejHSGhDYFunAQ9pcefR7ru2QIBuHXoy0BgS2RTrwTa/6/vwfNwfZOPRipDUgsC3SgdlS35+Lgj2sDr0YaQ0IbIt4YLtXcdDzppCLkdaAwLZoCRxyMdIaENgW8cCpGVekKry0hcC2SAd+xo/0ntgQ2BbpwHogsA2BHSCwDYEdILA2CGxDYAcIbENgBwisDQLbENgBAtsQ2AECa4PANgR2gMA2BHaAwNogsA2BHSCwDYEdILA2CGxDYAcIbENgBwisDQLbENgBAtsQ2AECa4PANgR2gMA2BHaAwNogsA2BHSCwDYEdILA2CGxDYAcIbENgBwisDQLbENgBAtsMDLx7g/QUm/4kPcWyI9JTzCmXnaGqQHonziwQGqYzMBgAgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiNAW+9Dfpy7dw1ekq6+byGfdDNQW+kLZceo7phxXsCOd7S8Jc3lrrFHLYUetme4rAUMW74vPrQVWyUzSM+eFcuf+wh3uN4cvrshvC+R1A+qb49ulu2RbB8dtzc1nfXK/bs9yP1hV4aec7x70xy0N8igvFDyXF5Sw5Lz5DbmYx79DnYK+BEZ1iSGzOGIvg+F15eezBPK9HN7kfrSuwbwX5DKlZzi/9Sb3kX5ZUCA5v9C4/wkr54hvF90DBFCkzxMdekS3+k8zwR9H7pt/BGsRkLBQbnbqEv59Qzlcli++A/BSX2Kfi376mEy+5H6Mx8OGvJCfY/kJblvFkacWhJ+ocFZqg9z0b7hjEzw3oLL4PCqbokSc+9oqqD5/3/ozv38j9UG2B12YwxnvIvFKlObtp1Fbrt2V+xzYLzfBFE5ayk7eKXyW+EwqmeCutY/7M1zzEp3iFtY7LzG6aVOh+qK7Ai2KHL2J8Ysxc8Snyt/vuXT4geBQu2+E5eC3bL74P/PR5a4o9AmegPs19xKfIGsXf68/L7v7Y/VBdgduO5ic8c49tJzXLxf9Vcb1E5NDlI3EGeoWKaz71VvGdzTgvDucXCv4LXYET11iB1yRJzFHcoQ6LaV8sPoHEocsidwZ6hYprPi1f52djjvEtAg/1dAW+a5IV+NX24lOsYAMKSz/4MRM//EkcuixyZ6A+Cq75jEybw9uPODC0jfuhugIviJu8jR2bH/+G+BR3P2bdDBO9AiR16PKROAP1UXDN58zgB/nWOBa3zP1QbY+iC9IZY/XGS/zPm1zdZW0D4RkkDl3/QuYwruaaD+cn14u8wUJX4F1V5z5fuvG4zBRtplk3M9sKzyBx6PKRPYwrI3pVQVdg1jiv8B9yU7yaUHC06uibCZOFZ5A4dPnIHsarSZ8NiF9V0BV4xdiu8ezOsaUSf7HKp2NZHRY74rLwDBKHLh8Fh3H5swGZqwoaL1WWbZ7SjUm9q+7/Vs5ZKf2ksNihy0fBYVz+bEDmqoK+wP9cPrpLbJz4Q2A1ZC+IKziMy58NyFxV0BX4sVYs8YFJn4g/mVs+bw3ne/u2GPSlxF7IXxBXcBiXPxuQuaqg7UEW67HilMT4M+1ZPr9wS8ojbRPFCyu4IK7gMC5/NiBzVUFX4C3TfnxjTLvh//1XwfHPZXzB+RK2gV/8wS+Ed0LNBXHZw7j82YDMVQWdT/jvX/AjJjp/y+meD498z/Oh4DbhHZC/IH55wWNdb895T/yBPFdxNuAhfFVBW+Cq3W/9NIM1f1RweL3Vng8tnvV8WCL+QFz6gviXHdit/XJuY93kFulQcjYgSFfgn6SzBjkFe4THZy7xPMRi3nPH18Qf38heED/X8vufeG83t2ks8XwwPzy7nO97/RuJGb4d+aPuFvdDdQW+56Wtoi+VswzoV8XHxXkeplV2HSo+i+QF8QkND1XfOdRwgvhO7E6OP8t3paf+QXyKwfUfHmVxP1TjMVjq+ty22C4PxDzE+af/lrBTYh/kLojf+4zv3shO4vvQu7t3nZ/ynPvEp0iZLTxUW2DZ63Ob+7V6+CS/zNKFT1BWDmjbp0j4+3s1nOe7t0DiJDZtsXWzTvxFITxri/BQbdei5a/PWXZfEB35IWvaqyl7X+ab3zrNd2+G+EN53upt62aOxBQv/FJ4qK7ACq7PSerQtYyXdWstM8XgHr57PYeIzzIx9aMKXrmy0VjB8bNmzXqjSccJ/yX2mgFdgRVcn5NU/13Ph/l1ZaZYF3Pl2FcQs158lsuP14nNiGdDLwqOb+7H/WhdgRVcn5PEvMffYrm/30jWb/mfdy/vy0ZKTbO/cMo8+TUZxegKrOL6nBwVgfkHGZ7zLNZkkdwsZz8v+q34hfmek7cIPxDRF1jJ9TkpSgLzij1Fy/dIndHzqkkNPP+TJE4QPRtvwljCfZM2lomN1nceHMnrc14sMTU1NYmlekVwNzifGvP8V6f+MqHOVNEJDi5+tnMci+/+wvpz7gcb/u5CCWP8RHRHWlc/fB4v8ZQy5+VbZw5uwmLdD9QS+BY/OuaPKhUxK6zbj9Okptkze2ASE/ivqSXwa350zB9Vqm4abt0+mSM8xfElj7dgKYPeEnlyXUvgI5f4N5U6Jo5KJfWHFH1WNDSheMeOHSLnwvmdY+pmv/SZ4CM9LYGTfut7Vx54X710ldB7E9hdJeInI1oC97+pL7u/bzUd80eXA35E/hkufSKLNcx9U/C5dS2Bv35uGPv5sGo65o86su9s+Hru0HTW7FeLBH6/iK7TpJ4nNU0cheTf2eBR+cdpLUVe4Ub3PNgYKp45Pb95as4NLNagd/jLLu9GiOwzp4cWP9sp1hN3XMl3AqN1BZZd3o0Q2WdOmXBca7TguFAULO9Ghewzp+JxvXQtJ6xuebeoF9lnTnX9C1awvBsVkX3mVFdgBcu70UHxnQ0KlnejQf7Fu3JwHqyXghfvykFgvRS8eFeOrsADfTTNHy0UvHhXjq7Aj3jlNq7zTOhNSVPz0j+ZHdA6+7neXbTObz7igflmdkzvNzAd9cAL60uvtBrdIv7iXV2BP7C83FTiTbEkRPzFu7oCJ1gSs8UXcQAlcB5MHAITpyewknUIQQUtgZWsQwhKaAmsZB1CUEJLYCXrEIISWgIrWYcQlNASWMk6hKCElsBq1iEEFbQEVrQOISig5zxYfh1CUETrlSzxdQhBFVyqJA6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2DiEJg4BCYOgYlDYOIQmDgEJg6BiUNg4hCYOAQmDoGJQ2Di/h/4RuR0s/M8ewAAAABJRU5ErkJggg==" /><!-- --></p>
 <p>Some seeds are quite similar (e.g. popcorn, wheat or oats), whereas
 sunflower differs substantially from all other resources.</p>
@@ -439,14 +439,14 @@ sunflower differs substantially from all other resources.</p>
 <h3>Resource use of populations</h3>
 <p>We begin by showing the resource use data for pigeons of Barcelona
 and Moia, expressed as proportions (i.e., the vector <span class="math inline">\(\mathbf{f}\)</span> for each population):</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>diet.pop.barcelona <span class="ot">=</span> <span class="fu">colSums</span>(diet.barcelona)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(diet.pop.barcelona<span class="sc">/</span><span class="fu">sum</span>(diet.pop.barcelona), <span class="at">dig=</span><span class="dv">3</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Oats      Peas   Popcorn       Soy Sunflower     Wheat </span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     0.049     0.001     0.028     0.024     0.455     0.442</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>diet.pop.moia <span class="ot">=</span> <span class="fu">colSums</span>(diet.moia)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(diet.pop.moia<span class="sc">/</span><span class="fu">sum</span>(diet.pop.moia), <span class="at">dig=</span><span class="dv">3</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Oats      Peas   Popcorn       Soy Sunflower     Wheat </span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     0.002     0.018     0.091     0.045     0.054     0.791</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>diet.pop.barcelona <span class="ot">&lt;-</span> <span class="fu">colSums</span>(diet.barcelona)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">round</span>(diet.pop.barcelona<span class="sc">/</span><span class="fu">sum</span>(diet.pop.barcelona), <span class="at">dig=</span><span class="dv">3</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt;      Oats      Peas   Popcorn       Soy Sunflower     Wheat </span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt;     0.049     0.001     0.028     0.024     0.455     0.442</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>diet.pop.moia <span class="ot">&lt;-</span> <span class="fu">colSums</span>(diet.moia)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="fu">round</span>(diet.pop.moia<span class="sc">/</span><span class="fu">sum</span>(diet.pop.moia), <span class="at">dig=</span><span class="dv">3</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt;      Oats      Peas   Popcorn       Soy Sunflower     Wheat </span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt;     0.002     0.018     0.091     0.045     0.054     0.791</span></span></code></pre></div>
 <p>Whereas pigeons in Moià feed almost exclusively on wheat, those of
 Barcelona combine wheat and sunflower seeds.</p>
 </div>
@@ -459,26 +459,26 @@ populations as <span class="citation">De Cáceres et al.
 (1/2)\sum_{j=1}^r\sum_{k=1}^r{f_jf_kd_{jk}}\)</span></p>
 <p>We first conduct our calculations without taking into account the
 resemblance between resources (which is equal to stating that <span class="math inline">\(d_{jk}=1\)</span> in all cases):</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nichevar</span>(<span class="at">P=</span>diet.barcelona, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               B        LC        UC</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Niche 0.2966578 0.2664242 0.3356783</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nichevar</span>(<span class="at">P=</span>diet.moia, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               B        LC        UC</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Niche 0.1807663 0.1038748 0.2608526</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">nichevar</span>(<span class="at">P=</span>diet.barcelona, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt;               B        LC       UC</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; Niche 0.2966578 0.2708075 0.341462</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="fu">nichevar</span>(<span class="at">P=</span>diet.moia, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt;               B        LC        UC</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; Niche 0.1807663 0.1056621 0.2644953</span></span></code></pre></div>
 <p>In general, we can say that the niche breadth of the population in
 Moià is smaller than the niche breadth of the population in Barcelona.
 If we repeat the same calculations with the matrix of resource
 resemblance, we realize that the niche breadth of both populations
 becomes smaller:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>popvar.barcelona <span class="ot">=</span> <span class="fu">nichevar</span>(<span class="at">P=</span>diet.barcelona, <span class="at">D=</span>dfood, </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>popvar.barcelona</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               B        LC       UC</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Niche 0.2453822 0.2297968 0.258065</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>popvar.moia<span class="ot">=</span> <span class="fu">nichevar</span>(<span class="at">P=</span>diet.moia, <span class="at">D=</span>dfood, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>popvar.moia</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               B         LC        UC</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Niche 0.0853328 0.02723257 0.1690477</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>popvar.barcelona <span class="ot">&lt;-</span> <span class="fu">nichevar</span>(<span class="at">P=</span>diet.barcelona, <span class="at">D=</span>dfood, </span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>                            <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>popvar.barcelona</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt;               B        LC        UC</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; Niche 0.2453822 0.2317905 0.2587153</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>popvar.moia <span class="ot">&lt;-</span> <span class="fu">nichevar</span>(<span class="at">P=</span>diet.moia, <span class="at">D=</span>dfood, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>popvar.moia</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt;               B        LC        UC</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; Niche 0.0853328 0.0258362 0.1665805</span></span></code></pre></div>
 <p>The reason is that the first analysis was assuming that all resources
 were equally (and maximally) distinct, while the second analysis
 accounts for the similarity between some resources. Moreover, note that
@@ -494,12 +494,12 @@ populations: <span class="math display">\[
 O_{12} =
 \frac{\sum_{j=1}^r\sum_{k=1}^r{f_{1j}f_{2k}(1-d_{jk}^2)}}{\sqrt{\sum_{j=1}^r\sum_{k=1}^r{f_{1j}f_{1k}(1-d_{jk}^2)}\sum_{j=1}^r\sum_{k=1}^r{f_{2j}f_{2k}(1-d_{jk}^2)}}}
 \]</span> Using function <code>nicheoverlap()</code>:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nicheoverlap</span>(<span class="at">P1=</span>diet.barcelona, <span class="at">P2=</span>diet.moia, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 O      LC        UC</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Overlap 0.7419319 0.44017 0.9360427</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nicheoverlap</span>(<span class="at">P1=</span>diet.barcelona, <span class="at">P2=</span>diet.moia, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>, <span class="at">D =</span> dfood)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 O        LC        UC</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Overlap 0.7912472 0.5586875 0.9434872</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">nicheoverlap</span>(<span class="at">P1=</span>diet.barcelona, <span class="at">P2=</span>diet.moia, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt;                 O        LC        UC</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; Overlap 0.7419319 0.4919862 0.9277662</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="fu">nicheoverlap</span>(<span class="at">P1=</span>diet.barcelona, <span class="at">P2=</span>diet.moia, <span class="at">mode=</span><span class="st">&quot;single&quot;</span>, <span class="at">D =</span> dfood)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt;                 O        LC        UC</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; Overlap 0.7912472 0.5238733 0.9392477</span></span></code></pre></div>
 <p>If we include the resemblance between resources, the degree of
 overlap increases, for the same reason that we obtained smaller niche
 breadth statistics when resemblances were included.</p>
@@ -518,58 +518,58 @@ individual specialization.</p>
 sample from the Barcelona population, expressed as proportions (i.e.,
 matrix <span class="math inline">\(\mathbf{F}\)</span> for
 Barcelona):</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">sweep</span>(diet.barcelona, <span class="dv">1</span>, <span class="at">FUN=</span><span class="st">&quot;/&quot;</span>, </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rowSums</span>(diet.barcelona)), <span class="at">dig=</span><span class="dv">3</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Oats  Peas Popcorn   Soy Sunflower Wheat</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  0.000 0.000   0.000 0.000     0.020 0.980</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  0.000 0.000   0.000 0.000     1.000 0.000</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  0.000 0.000   0.000 0.000     1.000 0.000</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  0.025 0.000   0.153 0.000     0.000 0.822</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  0.000 0.000   0.000 0.000     0.965 0.035</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6  0.000 0.023   0.136 0.000     0.648 0.193</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7  0.000 0.000   0.000 0.000     0.795 0.205</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8  0.042 0.000   0.000 0.000     0.000 0.958</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9  1.000 0.000   0.000 0.000     0.000 0.000</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 0.014 0.000   0.000 0.000     0.014 0.973</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 0.000 0.000   0.000 0.000     0.350 0.650</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 0.000 0.000   0.000 0.000     0.047 0.953</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13 0.000 0.000   0.000 0.000     0.437 0.562</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14 0.000 0.000   0.000 0.000     0.389 0.611</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15 0.000 0.000   0.000 0.549     0.451 0.000</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16 0.000 0.000   0.000 0.000     0.913 0.087</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 17 0.000 0.000   0.113 0.075     0.755 0.057</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18 0.000 0.000   0.043 0.000     0.743 0.214</span></span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 19 0.000 0.000   0.000 0.000     0.667 0.333</span></span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20 0.000 0.000   0.000 0.000     0.367 0.633</span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21 0.000 0.000   0.000 0.000     0.910 0.090</span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 22 0.000 0.000   0.019 0.019     0.786 0.175</span></span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 23 0.442 0.000   0.000 0.000     0.000 0.558</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">sweep</span>(diet.barcelona, <span class="dv">1</span>, <span class="at">FUN=</span><span class="st">&quot;/&quot;</span>, </span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>            <span class="fu">rowSums</span>(diet.barcelona)), <span class="at">dig=</span><span class="dv">3</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt;     Oats  Peas Popcorn   Soy Sunflower Wheat</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; 1  0.000 0.000   0.000 0.000     0.020 0.980</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; 2  0.000 0.000   0.000 0.000     1.000 0.000</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; 3  0.000 0.000   0.000 0.000     1.000 0.000</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; 4  0.025 0.000   0.153 0.000     0.000 0.822</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; 5  0.000 0.000   0.000 0.000     0.965 0.035</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; 6  0.000 0.023   0.136 0.000     0.648 0.193</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; 7  0.000 0.000   0.000 0.000     0.795 0.205</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; 8  0.042 0.000   0.000 0.000     0.000 0.958</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; 9  1.000 0.000   0.000 0.000     0.000 0.000</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; 10 0.014 0.000   0.000 0.000     0.014 0.973</span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; 11 0.000 0.000   0.000 0.000     0.350 0.650</span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt; 12 0.000 0.000   0.000 0.000     0.047 0.953</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; 13 0.000 0.000   0.000 0.000     0.437 0.562</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#&gt; 14 0.000 0.000   0.000 0.000     0.389 0.611</span></span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="co">#&gt; 15 0.000 0.000   0.000 0.549     0.451 0.000</span></span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="co">#&gt; 16 0.000 0.000   0.000 0.000     0.913 0.087</span></span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a><span class="co">#&gt; 17 0.000 0.000   0.113 0.075     0.755 0.057</span></span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a><span class="co">#&gt; 18 0.000 0.000   0.043 0.000     0.743 0.214</span></span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a><span class="co">#&gt; 19 0.000 0.000   0.000 0.000     0.667 0.333</span></span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a><span class="co">#&gt; 20 0.000 0.000   0.000 0.000     0.367 0.633</span></span>
+<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a><span class="co">#&gt; 21 0.000 0.000   0.000 0.000     0.910 0.090</span></span>
+<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a><span class="co">#&gt; 22 0.000 0.000   0.019 0.019     0.786 0.175</span></span>
+<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a><span class="co">#&gt; 23 0.442 0.000   0.000 0.000     0.000 0.558</span></span></code></pre></div>
 <p>We see that most individuals in Barcelona feed on either sunflower or
 wheat, but there are some individuals (like pigeon 9) which prefer oats.
 Now we display the resource use data for the 19 pigeons representing the
 population in Moià (i.e., matrix <span class="math inline">\(\mathbf{F}\)</span> for Moià):</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">sweep</span>(diet.moia, <span class="dv">1</span>, <span class="at">FUN=</span><span class="st">&quot;/&quot;</span>, </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rowSums</span>(diet.moia)), <span class="at">dig=</span><span class="dv">3</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Oats  Peas Popcorn   Soy Sunflower Wheat</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  0.000 0.000   0.000 0.324     0.000 0.676</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  0.000 0.000   0.000 0.012     0.000 0.988</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  0.000 0.000   0.000 0.000     0.000 1.000</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  0.000 0.000   0.000 0.000     0.000 1.000</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  0.000 0.000   0.000 0.000     0.000 1.000</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6  0.000 0.000   0.267 0.000     0.000 0.733</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7  0.000 0.000   0.319 0.000     0.000 0.681</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8  0.027 0.311   0.041 0.000     0.000 0.622</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9  0.000 0.000   0.000 0.000     0.000 1.000</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 0.000 0.000   0.148 0.000     0.000 0.852</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 0.000 0.000   0.200 0.000     0.000 0.800</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 0.000 0.000   0.235 0.000     0.000 0.765</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13 0.000 0.000   0.000 0.000     0.000 1.000</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 14 0.000 0.000   0.119 0.339     0.136 0.407</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15 0.000 0.000   0.000 0.000     0.000 1.000</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16 0.000 0.000   0.000 0.000     0.000 1.000</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 17 0.000 0.000   0.430 0.000     0.000 0.570</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 18 0.000 0.000   0.000 0.000     0.583 0.417</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 19 0.000 0.000   0.000 0.000     1.000 0.000</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">sweep</span>(diet.moia, <span class="dv">1</span>, <span class="at">FUN=</span><span class="st">&quot;/&quot;</span>, </span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>            <span class="fu">rowSums</span>(diet.moia)), <span class="at">dig=</span><span class="dv">3</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt;     Oats  Peas Popcorn   Soy Sunflower Wheat</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; 1  0.000 0.000   0.000 0.324     0.000 0.676</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; 2  0.000 0.000   0.000 0.012     0.000 0.988</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt; 3  0.000 0.000   0.000 0.000     0.000 1.000</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; 4  0.000 0.000   0.000 0.000     0.000 1.000</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; 5  0.000 0.000   0.000 0.000     0.000 1.000</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt; 6  0.000 0.000   0.267 0.000     0.000 0.733</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt; 7  0.000 0.000   0.319 0.000     0.000 0.681</span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co">#&gt; 8  0.027 0.311   0.041 0.000     0.000 0.622</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co">#&gt; 9  0.000 0.000   0.000 0.000     0.000 1.000</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt; 10 0.000 0.000   0.148 0.000     0.000 0.852</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt; 11 0.000 0.000   0.200 0.000     0.000 0.800</span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt; 12 0.000 0.000   0.235 0.000     0.000 0.765</span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="co">#&gt; 13 0.000 0.000   0.000 0.000     0.000 1.000</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt; 14 0.000 0.000   0.119 0.339     0.136 0.407</span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a><span class="co">#&gt; 15 0.000 0.000   0.000 0.000     0.000 1.000</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a><span class="co">#&gt; 16 0.000 0.000   0.000 0.000     0.000 1.000</span></span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a><span class="co">#&gt; 17 0.000 0.000   0.430 0.000     0.000 0.570</span></span>
+<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a><span class="co">#&gt; 18 0.000 0.000   0.000 0.000     0.583 0.417</span></span>
+<span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a><span class="co">#&gt; 19 0.000 0.000   0.000 0.000     1.000 0.000</span></span></code></pre></div>
 <p>Many pigeons from Moià feed on wheat seeds almost exclusively, but
 some of them have broader preferences.</p>
 </div>
@@ -580,39 +580,39 @@ of each individual in the population, <span class="math inline">\(B_i\)</span>: 
 B_i = (1/2)\sum_{j=1}^r\sum_{k=1}^r{f_{ij}f_{ik}d_{jk}}
 \]</span> We calculate the values for the individuals of both
 populations:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>indvar.barcelona<span class="ot">&lt;-</span><span class="fu">nichevar</span>(<span class="at">P=</span>diet.barcelona, <span class="at">D=</span>dfood)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(indvar.barcelona)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        B          </span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Min.   :0.00000  </span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1st Qu.:0.01755  </span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Median :0.08153  </span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Mean   :0.11168  </span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3rd Qu.:0.19890  </span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Max.   :0.24609</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>indvar.moia<span class="ot">&lt;-</span><span class="fu">nichevar</span>(<span class="at">P=</span>diet.moia, <span class="at">D=</span>dfood)</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(indvar.moia)</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        B          </span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Min.   :0.00000  </span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1st Qu.:0.00000  </span></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Median :0.01015  </span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Mean   :0.04031  </span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3rd Qu.:0.01861  </span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Max.   :0.24306</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>indvar.barcelona <span class="ot">&lt;-</span> <span class="fu">nichevar</span>(<span class="at">P=</span>diet.barcelona, <span class="at">D=</span>dfood)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">summary</span>(indvar.barcelona)</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt;        B          </span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt;  Min.   :0.00000  </span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt;  1st Qu.:0.01755  </span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt;  Median :0.08153  </span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt;  Mean   :0.11168  </span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="co">#&gt;  3rd Qu.:0.19890  </span></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="co">#&gt;  Max.   :0.24609</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>indvar.moia <span class="ot">&lt;-</span> <span class="fu">nichevar</span>(<span class="at">P=</span>diet.moia, <span class="at">D=</span>dfood)</span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="fu">summary</span>(indvar.moia)</span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="co">#&gt;        B          </span></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a><span class="co">#&gt;  Min.   :0.00000  </span></span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a><span class="co">#&gt;  1st Qu.:0.00000  </span></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a><span class="co">#&gt;  Median :0.01015  </span></span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a><span class="co">#&gt;  Mean   :0.04031  </span></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="co">#&gt;  3rd Qu.:0.01861  </span></span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a><span class="co">#&gt;  Max.   :0.24306</span></span></code></pre></div>
 <p>Most individuals have niche breadths that are smaller than the niche
 breadth of their corresponding population, although a few individuals in
 Moià have niche breadths larger than the population value. A niche
 breadth equal to zero indicates that only one resource is exploited.</p>
 <p>We can compare the niche breadth values of the two populations using
 a non-parametric test.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(indvar.barcelona<span class="sc">$</span>B, indvar.moia<span class="sc">$</span>B)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in wilcox.test.default(indvar.barcelona$B, indvar.moia$B): cannot</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; compute exact p-value with ties</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Wilcoxon rank sum test with continuity correction</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; data:  indvar.barcelona$B and indvar.moia$B</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; W = 328, p-value = 0.005446</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; alternative hypothesis: true location shift is not equal to 0</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">wilcox.test</span>(indvar.barcelona<span class="sc">$</span>B, indvar.moia<span class="sc">$</span>B)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co">#&gt; Warning in wilcox.test.default(indvar.barcelona$B, indvar.moia$B): cannot</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt; compute exact p-value with ties</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt;  Wilcoxon rank sum test with continuity correction</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt; data:  indvar.barcelona$B and indvar.moia$B</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="co">#&gt; W = 328, p-value = 0.005446</span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co">#&gt; alternative hypothesis: true location shift is not equal to 0</span></span></code></pre></div>
 <p>The Wilcoxon test confirms that the niche breadth of pigeons in
 Barcelona is generally higher than that of pigeons in Moià, as we saw at
 the population level.</p>
@@ -628,29 +628,29 @@ population. Note that it is possible that <span class="math inline">\(B_i\)</spa
 average of <span class="math inline">\(B_i\)</span> values to be larger
 than <span class="math inline">\(B_{pop}\)</span>. If we calculate <span class="math inline">\(S_{pop}\)</span> for the two populations we
 have:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>Spec.barcelona <span class="ot">=</span> <span class="fu">mean</span>(indvar.barcelona<span class="sc">$</span>B)<span class="sc">/</span>popvar.barcelona<span class="sc">$</span>B</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>Spec.barcelona</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.4551234</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>Spec.moia <span class="ot">=</span> <span class="fu">mean</span>(indvar.moia<span class="sc">$</span>B)<span class="sc">/</span>popvar.moia<span class="sc">$</span>B</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>Spec.moia</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.4723618</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>Spec.barcelona <span class="ot">&lt;-</span> <span class="fu">mean</span>(indvar.barcelona<span class="sc">$</span>B)<span class="sc">/</span>popvar.barcelona<span class="sc">$</span>B</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>Spec.barcelona</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co">#&gt; [1] 0.4551234</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>Spec.moia <span class="ot">&lt;-</span> <span class="fu">mean</span>(indvar.moia<span class="sc">$</span>B)<span class="sc">/</span>popvar.moia<span class="sc">$</span>B</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>Spec.moia</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co">#&gt; [1] 0.4723618</span></span></code></pre></div>
 <p>Surprisingly, the degree of specialization in Moià seems slightly
 higher than that in Barcelona. To see whether this holds statistically,
 we can calculate the degree of specialization of each individual: <span class="math display">\[
 S_i = \frac{B_i}{B_{pop}}
 \]</span> which, in R, is:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>Spec.ind.barcelona <span class="ot">=</span> indvar.barcelona<span class="sc">$</span>B<span class="sc">/</span>popvar.barcelona<span class="sc">$</span>B</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>Spec.ind.moia <span class="ot">=</span> indvar.moia<span class="sc">$</span>B<span class="sc">/</span>popvar.moia<span class="sc">$</span>B</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>Spec.ind.barcelona <span class="ot">&lt;-</span> indvar.barcelona<span class="sc">$</span>B<span class="sc">/</span>popvar.barcelona<span class="sc">$</span>B</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>Spec.ind.moia <span class="ot">&lt;-</span> indvar.moia<span class="sc">$</span>B<span class="sc">/</span>popvar.moia<span class="sc">$</span>B</span></code></pre></div>
 <p>Finally, we compare this two vectors in a Wilcoxon test:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(Spec.ind.barcelona, Spec.ind.moia)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in wilcox.test.default(Spec.ind.barcelona, Spec.ind.moia): cannot</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; compute exact p-value with ties</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Wilcoxon rank sum test with continuity correction</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; data:  Spec.ind.barcelona and Spec.ind.moia</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; W = 277, p-value = 0.1392</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; alternative hypothesis: true location shift is not equal to 0</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">wilcox.test</span>(Spec.ind.barcelona, Spec.ind.moia)</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="co">#&gt; Warning in wilcox.test.default(Spec.ind.barcelona, Spec.ind.moia): cannot</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co">#&gt; compute exact p-value with ties</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co">#&gt;  Wilcoxon rank sum test with continuity correction</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt; data:  Spec.ind.barcelona and Spec.ind.moia</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; W = 277, p-value = 0.1392</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt; alternative hypothesis: true location shift is not equal to 0</span></span></code></pre></div>
 <p>Which tells us that those differences in individual specialization
 are not statistically significant.</p>
 </div>
@@ -660,42 +660,42 @@ are not statistically significant.</p>
 individual overlaps with the niche of other individuals in the
 population. This can be done by calling function
 <code>nicheoverlap()</code> using <code>mode = &quot;pairwise&quot;</code>:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>O.barcelona <span class="ot">=</span> <span class="fu">nicheoverlap</span>(diet.barcelona,<span class="at">D=</span>dfood, <span class="at">mode=</span><span class="st">&quot;pairwise&quot;</span>)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>O.moia <span class="ot">=</span> <span class="fu">nicheoverlap</span>(diet.moia,<span class="at">D=</span>dfood, <span class="at">mode=</span><span class="st">&quot;pairwise&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>O.barcelona <span class="ot">&lt;-</span> <span class="fu">nicheoverlap</span>(diet.barcelona,<span class="at">D=</span>dfood, <span class="at">mode=</span><span class="st">&quot;pairwise&quot;</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>O.moia <span class="ot">&lt;-</span> <span class="fu">nicheoverlap</span>(diet.moia,<span class="at">D=</span>dfood, <span class="at">mode=</span><span class="st">&quot;pairwise&quot;</span>)</span></code></pre></div>
 <p>These calls to <code>nicheoverlap()</code> return a symmetric square
 matrix with as many rows and columns as individuals in the resource use
 data frame. Each cell value in the symmetric matrix is the overlap
 between two individuals of the population. Using these matrices we can
 derive the average overlap in each population:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(O.barcelona[<span class="fu">lower.tri</span>(O.barcelona)])</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.6726374</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(O.moia[<span class="fu">lower.tri</span>(O.moia)])</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.8438816</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">mean</span>(O.barcelona[<span class="fu">lower.tri</span>(O.barcelona)])</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="co">#&gt; [1] 0.6726374</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="fu">mean</span>(O.moia[<span class="fu">lower.tri</span>(O.moia)])</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="co">#&gt; [1] 0.8438816</span></span></code></pre></div>
 <p>We can also calculate the average overlap between each individual and
 the remaining individuals in its population:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>O.barcelona.ind <span class="ot">=</span> (<span class="fu">rowSums</span>(O.barcelona)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">/</span>(<span class="fu">nrow</span>(O.barcelona)<span class="sc">-</span><span class="dv">1</span>)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(O.barcelona.ind)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.5400  0.6028  0.6558  0.6726  0.7595  0.8055</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>O.moia.ind <span class="ot">=</span> (<span class="fu">rowSums</span>(O.moia)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">/</span>(<span class="fu">nrow</span>(O.moia)<span class="sc">-</span><span class="dv">1</span>)</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(O.moia.ind)</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.09157 0.89915 0.90649 0.84388 0.90965 0.91134</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>O.barcelona.ind <span class="ot">&lt;-</span> (<span class="fu">rowSums</span>(O.barcelona)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">/</span>(<span class="fu">nrow</span>(O.barcelona)<span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="fu">summary</span>(O.barcelona.ind)</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="co">#&gt;  0.5400  0.6028  0.6558  0.6726  0.7595  0.8055</span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>O.moia.ind <span class="ot">&lt;-</span> (<span class="fu">rowSums</span>(O.moia)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">/</span>(<span class="fu">nrow</span>(O.moia)<span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="fu">summary</span>(O.moia.ind)</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="co">#&gt; 0.09157 0.89915 0.90649 0.84388 0.90965 0.91134</span></span></code></pre></div>
 <p>We substracted one in the numerator and denominator in order to
 exclude the target individual from the average (the overlap between a
 resource niche and itself is always one). Apparently, the individuals in
 Moià have a larger degree of overlap with individuals of their
 population than individuals in Barcelona. A non-parametric test seems to
 confirm this difference:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(O.barcelona.ind, O.moia.ind)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in wilcox.test.default(O.barcelona.ind, O.moia.ind): cannot compute</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; exact p-value with ties</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Wilcoxon rank sum test with continuity correction</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; data:  O.barcelona.ind and O.moia.ind</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; W = 37, p-value = 4.549e-06</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; alternative hypothesis: true location shift is not equal to 0</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">wilcox.test</span>(O.barcelona.ind, O.moia.ind)</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="co">#&gt; Warning in wilcox.test.default(O.barcelona.ind, O.moia.ind): cannot compute</span></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="co">#&gt; exact p-value with ties</span></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="co">#&gt;  Wilcoxon rank sum test with continuity correction</span></span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="co">#&gt; data:  O.barcelona.ind and O.moia.ind</span></span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a><span class="co">#&gt; W = 37, p-value = 4.549e-06</span></span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a><span class="co">#&gt; alternative hypothesis: true location shift is not equal to 0</span></span></code></pre></div>
 </div>
 </div>
 <div id="bibliography" class="section level2 unnumbered">
