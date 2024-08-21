@@ -1,8 +1,8 @@
 Package: indicspecies
 Type: Package
 Title: Relationship Between Species and Groups of Sites
-Version: 1.7.14
-Date: 2023-07-20
+Version: 1.7.15
+Date: 2024-08-21
 Authors@R: c(
 	person('Miquel', 'De Cáceres', role=c('aut','cre'),
 	email='miquelcaceres@gmail.com', comment = c(ORCID = "0000-0001-7132-2080")),
@@ -14,15 +14,16 @@ Suggests: rmarkdown, knitr, testthat (>= 3.0.0)
 Encoding: UTF-8
 License: GPL (>= 2)
 URL: https://emf-creaf.github.io/indicspecies/
-RoxygenNote: 7.2.3
+BugReports: https://github.com/emf-creaf/indicspecies/issues
+RoxygenNote: 7.3.2
 LazyLoad: yes
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2023-07-20 08:42:37 UTC; miquel
+Packaged: 2024-08-21 10:07:03 UTC; miquel
 Author: Miquel De Cáceres [aut, cre] (<https://orcid.org/0000-0001-7132-2080>),
   Florian Jansen [aut],
   Noah Dell [aut]
 Maintainer: Miquel De Cáceres <miquelcaceres@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-07-20 09:10:02 UTC
+Date/Publication: 2024-08-21 21:30:02 UTC

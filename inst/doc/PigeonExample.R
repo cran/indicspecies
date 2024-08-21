@@ -14,7 +14,7 @@ ls()
 ## -----------------------------------------------------------------------------
 dfood
 
-## ---- fig=TRUE, fig.height=5, fig.width=5-------------------------------------
+## ----fig=TRUE, fig.height=5, fig.width=5--------------------------------------
 plot(hclust(dfood, method="average"), h=-1, xlab="", 
      ylab="Distance", main="", sub="", ylim=c(0.2,1))
 

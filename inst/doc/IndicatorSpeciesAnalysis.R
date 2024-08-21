@@ -92,7 +92,7 @@ coverage(wetland, indvalori)
 ## -----------------------------------------------------------------------------
 coverage(wetland, indvalori, At = 0.8, alpha = 0.05)
 
-## ---- fig = TRUE, fig.width = 5, fig.height = 5-------------------------------
+## ----fig = TRUE, fig.width = 5, fig.height = 5--------------------------------
 plotcoverage(x=wetland, y=indvalori, group="1", lty=1)
 plotcoverage(x=wetland, y=indvalori, group="2", lty=2, col="blue", add=TRUE)
 plotcoverage(x=wetland, y=indvalori, group="3", lty=3, col="red", add=TRUE)
@@ -123,7 +123,7 @@ coverage(sc)
 ## -----------------------------------------------------------------------------
 coverage(sc, At=0.8, alpha =0.05)
 
-## ---- fig = TRUE, fig.width = 5, fig.height = 5-------------------------------
+## ----fig = TRUE, fig.width = 5, fig.height = 5--------------------------------
 plotcoverage(sc)
 plotcoverage(sc, max.order=1, add=TRUE, lty=2, col="red")
 legend(x=0.1, y=20, legend=c("Species combinations","Species singletons"), 
