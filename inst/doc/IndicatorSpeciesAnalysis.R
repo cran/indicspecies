@@ -54,6 +54,14 @@ round(head(phi$str),3)
 round(head(indval$str),3)
 
 ## -----------------------------------------------------------------------------
+phi <- multipatt(wetlandpa, groups, func = "r.g", 
+                 control = how(nperm=999), 
+                 allow.negative = TRUE) 
+
+## -----------------------------------------------------------------------------
+summary(phi)
+
+## -----------------------------------------------------------------------------
 indvalori <- multipatt(wetland, groups, duleg = TRUE, 
                        control = how(nperm=999)) 
 summary(indvalori)
